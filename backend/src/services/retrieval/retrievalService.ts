@@ -79,6 +79,32 @@ export const RetrievalService = {
     const filtered = scored.filter((item) => item.file !== undefined);
     filtered.sort((a, b) => b.relevanceScore - a.relevanceScore);
 
+    // If multiple target files are specified, ensure balanced representation across all selected files
+    if (targetFileIds.length > 1) {
+      const perFileTarget = Math.max(2, Math.floor(limit / targetFileIds.length));
+      const balanced: RankedSource[] = [];
+      const seenIds = new Set<string>();
+
+      for (const fId of targetFileIds) {
+        const fileChunks = filtered.filter((s) => s.file.id === fId);
+        for (const item of fileChunks.slice(0, perFileTarget)) {
+          if (!seenIds.has(item.content.id)) {
+            seenIds.add(item.content.id);
+            balanced.push(item);
+          }
+        }
+      }
+
+      for (const item of filtered) {
+        if (!seenIds.has(item.content.id) && balanced.length < limit) {
+          seenIds.add(item.content.id);
+          balanced.push(item);
+        }
+      }
+
+      return balanced;
+    }
+
     return filtered.slice(0, limit);
   },
 

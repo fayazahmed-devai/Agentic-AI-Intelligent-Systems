@@ -102,15 +102,23 @@ export const AIController = {
         return;
       }
 
+      let cleanTopic = (topic || '').trim();
+      const targetNames = targetFiles.map((f) => f.original_name).join(' ');
+
+      // If topic is empty or still mentions Newtonian but the selected files are different (e.g. BEE), auto-generate topic from files
+      if (!cleanTopic || (cleanTopic.toLowerCase().includes('newtonian') && !targetNames.toLowerCase().includes('newtonian'))) {
+        cleanTopic = targetFiles.map((f) => f.original_name.replace(/\.[^/.]+$/, '')).join(' & ') + ' Synthesis';
+      }
+
       const sources = await RetrievalService.searchRelevantEvidence(
         userId,
-        topic || 'overview',
+        cleanTopic,
         targetFiles.map((f) => f.id),
-        10
+        12
       );
 
       const result = await GeminiService.runConnectedIntelligence({
-        topic: topic || 'All Workspace Modalities',
+        topic: cleanTopic,
         sources,
         files: targetFiles,
       });
@@ -120,7 +128,7 @@ export const AIController = {
         id: uuidv4(),
         user_id: userId,
         content_type: 'connected_intelligence',
-        title: `Connected Intelligence: ${topic || 'Workspace Synthesis'}`,
+        title: `Connected Intelligence: ${cleanTopic}`,
         content: result.content,
         metadata: {
           sourceCount: result.sources.length,

@@ -11,7 +11,7 @@ export const config = {
   jwtSecret: process.env.JWT_SECRET || 'nexusmind_production_super_secure_jwt_secret_2026',
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || '7d',
   geminiApiKey: process.env.GEMINI_API_KEY || '',
-  geminiModel: process.env.GEMINI_MODEL || 'gemini-1.5-flash',
+  geminiModel: process.env.GEMINI_MODEL || 'gemini-3.5-flash-lite',
   supabaseUrl: process.env.SUPABASE_URL || '',
   supabaseServiceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY || '',
   supabaseStorageBucket: process.env.SUPABASE_STORAGE_BUCKET || 'nexusmind-files',
