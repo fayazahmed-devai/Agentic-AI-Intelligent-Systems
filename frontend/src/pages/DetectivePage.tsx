@@ -39,6 +39,19 @@ export default function DetectivePage() {
 
   useEffect(() => {
     fetchHistory();
+
+    // Check for query parameters in URL
+    const params = new URLSearchParams(window.location.search);
+    const qParam = params.get('query');
+    const fParam = params.get('fileId');
+
+    if (fParam) {
+      setSelectedFileIds([fParam]);
+    }
+    if (qParam) {
+      setQuery(qParam);
+      runInvestigation(qParam);
+    }
   }, []);
 
   const fetchHistory = async () => {
@@ -274,74 +287,79 @@ export default function DetectivePage() {
       )}
 
       {/* Active Investigation Report */}
-      {investigation && (
-        <div className="space-y-6">
-          {/* Key Overview Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                Modalities Interrogated
-              </span>
-              <div className="flex items-center gap-2 mt-2 flex-wrap">
-                {investigation.modalities_searched.map((m) => (
-                  <span
-                    key={m}
-                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 text-xs font-semibold uppercase"
-                  >
-                    {getModalityIcon(m)}
-                    {m}
-                  </span>
-                ))}
+      {investigation && (() => {
+        const modalitiesSearched = (investigation.modalities_searched || ['document', 'image', 'audio', 'video']) as string[];
+        const conceptsDetected = investigation.concepts_detected || (investigation as any).detected_concepts || [];
+        const discrepancies = investigation.contradictions_or_discrepancies || (investigation as any).contradictions || [];
+        const findingsList = (investigation.findings || (investigation as any).sources || []) as any[];
+        const finalSynthesis = investigation.final_synthesis || (investigation as any).final_report || '';
+
+        return (
+          <div className="space-y-6">
+            {/* Key Overview Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                  Modalities Interrogated
+                </span>
+                <div className="flex items-center gap-2 mt-2 flex-wrap">
+                  {modalitiesSearched.map((m) => (
+                    <span
+                      key={m}
+                      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 text-xs font-semibold uppercase"
+                    >
+                      {getModalityIcon(m)}
+                      {m}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                  Concepts Isolated
+                </span>
+                <div className="flex items-center gap-1.5 mt-2 flex-wrap">
+                  {conceptsDetected.slice(0, 6).map((c: string, i: number) => (
+                    <span
+                      key={i}
+                      className="px-2 py-0.5 rounded-full bg-violet-50 text-brand-violet text-xs font-medium"
+                    >
+                      {c}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                  Discrepancies / Contradictions
+                </span>
+                <div className="mt-2 flex items-center gap-2">
+                  {discrepancies.length > 0 ? (
+                    <div className="flex items-center gap-2 text-amber-700 text-xs font-semibold bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-200">
+                      <ShieldAlert className="w-4 h-4 text-amber-600" />
+                      <span>{discrepancies.length} Discrepancies Noted</span>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2 text-emerald-700 text-xs font-semibold bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-200">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                      <span>Cross-Modal Harmony (0 Conflicts)</span>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
 
-            <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                Concepts Isolated
-              </span>
-              <div className="flex items-center gap-1.5 mt-2 flex-wrap">
-                {investigation.concepts_detected.slice(0, 5).map((c, i) => (
-                  <span
-                    key={i}
-                    className="px-2 py-0.5 rounded-full bg-violet-50 text-brand-violet text-xs font-medium"
-                  >
-                    {c}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                Discrepancies / Contradictions
-              </span>
-              <div className="mt-2 flex items-center gap-2">
-                {investigation.contradictions_or_discrepancies &&
-                investigation.contradictions_or_discrepancies.length > 0 ? (
-                  <div className="flex items-center gap-2 text-amber-700 text-xs font-semibold bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-200">
-                    <ShieldAlert className="w-4 h-4 text-amber-600" />
-                    <span>{investigation.contradictions_or_discrepancies.length} Discrepancy Found</span>
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-2 text-emerald-700 text-xs font-semibold bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-200">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                    <span>Cross-Modal Harmony (0 Conflicts)</span>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* Discrepancy Alert Box if any */}
-          {investigation.contradictions_or_discrepancies &&
-            investigation.contradictions_or_discrepancies.length > 0 && (
+            {/* Discrepancy Alert Box if any */}
+            {discrepancies.length > 0 && (
               <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 space-y-2">
                 <div className="flex items-center gap-2 text-amber-900 font-bold text-xs uppercase tracking-wide">
                   <ShieldAlert className="w-4 h-4 text-amber-600" />
                   Forensic Discrepancy Advisory
                 </div>
                 <ul className="list-disc list-inside text-xs text-amber-800 space-y-1">
-                  {investigation.contradictions_or_discrepancies.map((item, idx) => (
+                  {discrepancies.map((item: string, idx: number) => (
                     <li key={idx} className="leading-relaxed">
                       {item}
                     </li>
@@ -350,58 +368,65 @@ export default function DetectivePage() {
               </div>
             )}
 
-          {/* Forensic Evidence Cards */}
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-base font-bold text-navy-900 flex items-center gap-2">
-                <Compass className="w-4 h-4 text-brand-violet" />
-                Cross-Modal Correlated Evidence ({investigation.findings.length} Source Points)
-              </h2>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {investigation.findings.map((f: InvestigationFinding, idx: number) => (
-                <div
-                  key={idx}
-                  className="p-4 rounded-xl border border-slate-200 bg-slate-50/60 hover:bg-white hover:border-brand-violet/40 transition space-y-2"
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      {getModalityIcon(f.modality)}
-                      <span className="text-xs font-bold text-navy-900 truncate max-w-[180px]">
-                        {f.fileName}
-                      </span>
+            {/* Forensic Evidence Cards */}
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-4">
+              <div className="flex items-center justify-between">
+                <h2 className="text-base font-bold text-navy-900 flex items-center gap-2">
+                  <Compass className="w-4 h-4 text-brand-violet" />
+                  Cross-Modal Correlated Evidence ({findingsList.length} Source Points)
+                </h2>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {findingsList.map((f: any, idx: number) => {
+                  const fName = f.fileName || f.file_name || 'Document';
+                  const fFinding = f.finding || f.text || '';
+                  const fLabel = f.sourceLabel || f.citation || 'Grounded Evidence';
+                  const fRef = f.timestampOrPage;
+                  return (
+                    <div
+                      key={idx}
+                      className="p-4 rounded-xl border border-slate-200 bg-slate-50/60 hover:bg-white hover:border-brand-violet/40 transition space-y-2"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          {getModalityIcon(f.modality)}
+                          <span className="text-xs font-bold text-navy-900 truncate max-w-[180px]">
+                            {fName}
+                          </span>
+                        </div>
+                        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-white border border-slate-200 text-slate-600">
+                          {fLabel}
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-700 leading-relaxed font-medium">
+                        {fFinding}
+                      </p>
+                      {fRef && (
+                        <div className="text-[11px] text-slate-400 font-mono">
+                          Ref: {fRef}
+                        </div>
+                      )}
                     </div>
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-white border border-slate-200 text-slate-600">
-                      {f.sourceLabel}
-                    </span>
-                  </div>
-                  <p className="text-xs text-slate-700 leading-relaxed font-medium">
-                    {f.finding}
-                  </p>
-                  {f.timestampOrPage && (
-                    <div className="text-[11px] text-slate-400 font-mono">
-                      Ref: {f.timestampOrPage}
-                    </div>
-                  )}
-                </div>
-              ))}
+                  );
+                })}
+              </div>
             </div>
-          </div>
 
-          {/* Final Forensic Synthesis */}
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-4">
-            <div className="flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-brand-violet" />
-              <h2 className="text-base font-bold text-navy-900">
-                Final Investigation Report & Synthesis
-              </h2>
-            </div>
-            <div className="prose prose-slate max-w-none text-sm border-t border-slate-100 pt-4">
-              <FormattedContent content={investigation.final_synthesis} />
+            {/* Final Forensic Synthesis */}
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-4">
+              <div className="flex items-center gap-2">
+                <Sparkles className="w-5 h-5 text-brand-violet" />
+                <h2 className="text-base font-bold text-navy-900">
+                  Final Investigation Report & Synthesis
+                </h2>
+              </div>
+              <div className="prose prose-slate max-w-none text-sm border-t border-slate-100 pt-4">
+                <FormattedContent content={finalSynthesis} />
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
 
       {/* Investigation History Drawer / List */}
       {history.length > 0 && (

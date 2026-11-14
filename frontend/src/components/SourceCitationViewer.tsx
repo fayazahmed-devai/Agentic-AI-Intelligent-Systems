@@ -10,6 +10,18 @@ interface SourceCitationViewerProps {
 export default function SourceCitationViewer({ source, onClose }: SourceCitationViewerProps) {
   if (!source) return null;
 
+  const label =
+    (source as any).source_label ||
+    (source as any).sourceLabel ||
+    (source as any).fileName ||
+    (source as any).file_name ||
+    'Verified Evidence Source';
+  const fileId = (source as any).file_id || (source as any).fileId;
+  const pageNum = (source as any).page_number || (source as any).pageNumber;
+  const timestamp = (source as any).timestamp;
+  const relevance = (source as any).relevance_score ?? (source as any).relevanceScore;
+  const sourceType = (source as any).source_type || (source as any).sourceType || 'evidence';
+
   return (
     <div className="fixed inset-y-0 right-0 w-full sm:w-96 bg-white border-l border-slate-200 shadow-2xl z-50 p-6 flex flex-col justify-between animate-slideLeft">
       <div className="space-y-4">
@@ -31,31 +43,31 @@ export default function SourceCitationViewer({ source, onClose }: SourceCitation
             Source Identification
           </span>
           <h4 className="text-sm font-bold text-navy-900 leading-snug">
-            {source.source_label}
+            {label}
           </h4>
         </div>
 
         <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-2 text-xs">
           <div className="flex justify-between text-slate-600">
             <span>Source Type:</span>
-            <span className="font-semibold capitalize text-slate-800">{source.source_type}</span>
+            <span className="font-semibold capitalize text-slate-800">{sourceType}</span>
           </div>
-          {source.page_number && (
+          {pageNum && (
             <div className="flex justify-between text-slate-600">
               <span>Page Number:</span>
-              <span className="font-semibold text-slate-800">Page {source.page_number}</span>
+              <span className="font-semibold text-slate-800">Page {pageNum}</span>
             </div>
           )}
-          {source.timestamp && (
+          {timestamp && (
             <div className="flex justify-between text-slate-600">
               <span>Acoustic Timestamp:</span>
-              <span className="font-mono font-semibold text-slate-800">{source.timestamp}</span>
+              <span className="font-mono font-semibold text-slate-800">{timestamp}</span>
             </div>
           )}
           <div className="flex justify-between text-slate-600">
             <span>RAG Relevance:</span>
             <span className="font-mono font-bold text-emerald-600">
-              {source.relevance_score ? `${(source.relevance_score * 100).toFixed(0)}%` : 'High'}
+              {relevance ? `${(relevance * 100).toFixed(0)}%` : 'High (Grounded)'}
             </span>
           </div>
         </div>
@@ -69,15 +81,24 @@ export default function SourceCitationViewer({ source, onClose }: SourceCitation
       </div>
 
       <div className="pt-4 border-t border-slate-200">
-        <a
-          href={`/api/files/${source.file_id}/stream`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="w-full py-2.5 rounded-xl bg-navy-900 hover:bg-navy-800 text-white text-xs font-semibold flex items-center justify-center space-x-1.5 shadow-sm transition"
-        >
-          <span>Open Raw File</span>
-          <ExternalLink className="w-3.5 h-3.5" />
-        </a>
+        {fileId ? (
+          <a
+            href={`/api/files/${fileId}/stream`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full py-2.5 rounded-xl bg-navy-900 hover:bg-navy-800 text-white text-xs font-semibold flex items-center justify-center space-x-1.5 shadow-sm transition"
+          >
+            <span>Open Raw File</span>
+            <ExternalLink className="w-3.5 h-3.5" />
+          </a>
+        ) : (
+          <button
+            onClick={onClose}
+            className="w-full py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold"
+          >
+            Close Viewer
+          </button>
+        )}
       </div>
     </div>
   );

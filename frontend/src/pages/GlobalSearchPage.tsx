@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import api from '../services/api';
 import {
   Search,
@@ -8,6 +9,8 @@ import {
   Film,
   ExternalLink,
   Sparkles,
+  SearchCheck,
+  MessageSquareText,
 } from 'lucide-react';
 import { SearchResultItem } from '../types';
 
@@ -16,14 +19,24 @@ export default function GlobalSearchPage() {
   const [results, setResults] = useState<SearchResultItem[]>([]);
   const [hasSearched, setHasSearched] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
+  const navigate = useNavigate();
 
-  const handleSearch = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!query.trim()) return;
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const qParam = params.get('q');
+    if (qParam) {
+      setQuery(qParam);
+      runSearch(qParam);
+    }
+  }, []);
+
+  const runSearch = async (searchTerm: string) => {
+    const q = searchTerm.trim();
+    if (!q) return;
 
     try {
       setIsSearching(true);
-      const res: any = await api.get(`/search?q=${encodeURIComponent(query.trim())}`);
+      const res: any = await api.get(`/search?q=${encodeURIComponent(q)}`);
       if (res.success && res.data) {
         setResults(res.data);
       }
@@ -33,6 +46,11 @@ export default function GlobalSearchPage() {
     } finally {
       setIsSearching(false);
     }
+  };
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    runSearch(query);
   };
 
   return (
@@ -105,15 +123,33 @@ export default function GlobalSearchPage() {
                       </div>
                     </div>
 
-                    <a
-                      href={`/api/files/${item.fileId}/stream`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="p-1.5 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-500 hover:text-navy-900 text-xs font-semibold flex items-center space-x-1"
-                    >
-                      <span>Open File</span>
-                      <ExternalLink className="w-3.5 h-3.5" />
-                    </a>
+                    <div className="flex items-center gap-2">
+                      <Link
+                        to={`/chat?query=Explain%20${encodeURIComponent(item.snippet.slice(0, 80))}&fileId=${item.fileId}`}
+                        className="p-1.5 rounded-lg bg-violet-50 hover:bg-violet-100 text-brand-violet text-[11px] font-semibold flex items-center gap-1 transition"
+                        title="Ask AI about this snippet"
+                      >
+                        <MessageSquareText className="w-3.5 h-3.5" />
+                        <span>Ask AI</span>
+                      </Link>
+                      <Link
+                        to={`/detective?query=Investigate%20${encodeURIComponent(item.snippet.slice(0, 80))}&fileId=${item.fileId}`}
+                        className="p-1.5 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-700 text-[11px] font-semibold flex items-center gap-1 transition"
+                        title="Forensically investigate snippet"
+                      >
+                        <SearchCheck className="w-3.5 h-3.5 text-brand-violet" />
+                        <span>Investigate</span>
+                      </Link>
+                      <a
+                        href={`/api/files/${item.fileId}/stream`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-1.5 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-500 hover:text-navy-900 text-xs font-semibold flex items-center space-x-1"
+                      >
+                        <span>Open File</span>
+                        <ExternalLink className="w-3.5 h-3.5" />
+                      </a>
+                    </div>
                   </div>
 
                   <p className="text-xs text-slate-600 leading-relaxed font-mono bg-slate-50 p-3 rounded-xl border border-slate-100">

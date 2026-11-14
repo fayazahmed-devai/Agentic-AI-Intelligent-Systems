@@ -61,8 +61,13 @@ export const RetrievalService = {
         }
       }
 
-      // Relevance score between 0.5 and 1.0
-      const score = terms.length > 0 ? 0.5 + 0.5 * (matchCount / terms.length) : 0.7;
+      // Relevance score calculation: higher when more search terms match
+      let score = 0;
+      if (terms.length > 0) {
+        score = matchCount > 0 ? 0.5 + 0.5 * (matchCount / terms.length) : 0;
+      } else {
+        score = 0.7;
+      }
 
       let sourceLabel = '';
       if (file) {
@@ -87,8 +92,11 @@ export const RetrievalService = {
       };
     });
 
-    // Sort by relevance score descending
-    const filtered = scored.filter((item) => item.file !== undefined);
+    // Filter to valid files and prioritize items that matched search terms
+    let filtered = scored.filter((item) => item.file !== undefined && item.relevanceScore > 0);
+    if (filtered.length === 0) {
+      filtered = scored.filter((item) => item.file !== undefined);
+    }
     filtered.sort((a, b) => b.relevanceScore - a.relevanceScore);
 
     // If multiple target files are specified, ensure balanced representation across all selected files

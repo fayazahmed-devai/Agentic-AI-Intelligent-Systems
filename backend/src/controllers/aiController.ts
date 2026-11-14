@@ -59,16 +59,34 @@ export const AIController = {
         content: aiResponse.answer,
       });
 
-      for (const s of aiResponse.sources) {
+      const normalizedSources = aiResponse.sources.map((s) => ({
+        id: uuidv4(),
+        message_id: assistantMessage.id,
+        file_id: s.fileId,
+        fileId: s.fileId,
+        file_name: s.fileName,
+        fileName: s.fileName,
+        source_type: 'evidence',
+        sourceType: 'evidence',
+        source_label: s.sourceLabel,
+        sourceLabel: s.sourceLabel,
+        page_number: s.pageNumber,
+        pageNumber: s.pageNumber,
+        timestamp: s.timestamp,
+        relevance_score: s.relevanceScore,
+        relevanceScore: s.relevanceScore,
+      }));
+
+      for (const s of normalizedSources) {
         await db.messageSources.create({
-          id: uuidv4(),
+          id: s.id,
           message_id: assistantMessage.id,
-          file_id: s.fileId,
+          file_id: s.file_id,
           source_type: 'evidence',
-          source_label: s.sourceLabel,
-          page_number: s.pageNumber,
+          source_label: s.source_label,
+          page_number: s.page_number,
           timestamp: s.timestamp,
-          relevance_score: s.relevanceScore,
+          relevance_score: s.relevance_score,
         });
       }
 
@@ -77,7 +95,7 @@ export const AIController = {
         data: {
           conversationId: convId,
           message: assistantMessage,
-          sources: aiResponse.sources,
+          sources: normalizedSources,
         },
       });
     } catch (error: any) {

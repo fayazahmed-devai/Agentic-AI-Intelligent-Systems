@@ -262,16 +262,25 @@ export default function ChatPage() {
                           <span>Exact Source Citations:</span>
                         </span>
                         <div className="flex flex-wrap gap-1.5">
-                          {msg.sources.map((src, sIdx) => (
-                            <button
-                              key={src.id || sIdx}
-                              onClick={() => setInspectedSource(src)}
-                              className="px-2.5 py-1 rounded-full bg-slate-50 hover:bg-brand-violet/10 text-navy-900 hover:text-brand-violet text-[10px] font-mono font-semibold border border-slate-200 transition flex items-center space-x-1"
-                            >
-                              <span className="w-1.5 h-1.5 rounded-full bg-brand-violet"></span>
-                              <span>{src.source_label}</span>
-                            </button>
-                          ))}
+                          {msg.sources.map((src, sIdx) => {
+                            const label =
+                              (src as any).source_label ||
+                              (src as any).sourceLabel ||
+                              (src as any).fileName ||
+                              (src as any).file_name ||
+                              `Source #${sIdx + 1}`;
+                            return (
+                              <button
+                                key={src.id || sIdx}
+                                onClick={() => setInspectedSource(src)}
+                                className="px-2.5 py-1 rounded-full bg-slate-50 hover:bg-brand-violet/10 text-navy-900 hover:text-brand-violet text-[10px] font-mono font-semibold border border-slate-200 transition flex items-center space-x-1.5 shadow-2xs hover:border-brand-violet/40"
+                                title={`Inspect source citation: ${label}`}
+                              >
+                                <span className="w-1.5 h-1.5 rounded-full bg-brand-violet flex-shrink-0"></span>
+                                <span>{label}</span>
+                              </button>
+                            );
+                          })}
                         </div>
                       </div>
                     )}
