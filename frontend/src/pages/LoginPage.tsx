@@ -373,29 +373,13 @@ export default function LoginPage() {
                 </p>
               </div>
 
-              {/* Inbox Simulated Banner for Instant Evaluation */}
-              {sentCode && (
-                <div className="p-3 rounded-xl bg-violet-50 border border-violet-200 text-violet-900 text-xs flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <Mail className="w-4 h-4 text-brand-violet flex-shrink-0" />
-                    <div>
-                      <span className="text-[10px] uppercase font-bold text-brand-violet tracking-wider block">
-                        Email Code Delivered
-                      </span>
-                      <span className="font-mono font-bold tracking-widest text-sm text-navy-900">
-                        {sentCode}
-                      </span>
-                    </div>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={handleAutoFillCode}
-                    className="px-2.5 py-1 rounded-lg bg-navy-900 hover:bg-navy-800 text-white text-[11px] font-bold shadow-sm transition"
-                  >
-                    Auto-Fill
-                  </button>
-                </div>
-              )}
+              {/* Sent Email Notice (Code not shown on screen - sent directly to user's real email) */}
+              <div className="p-3.5 rounded-xl bg-violet-50 border border-violet-200 text-violet-900 text-xs flex items-center space-x-3">
+                <Mail className="w-5 h-5 text-brand-violet flex-shrink-0" />
+                <p className="leading-relaxed">
+                  We've sent a 6-digit confirmation code directly to <strong className="font-mono text-navy-900">{email}</strong>. Please check your inbox (and spam/junk folder) and enter the 6-digit code below.
+                </p>
+              </div>
 
               {/* 6 Digit Inputs */}
               <div className="space-y-2">

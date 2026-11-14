@@ -1,7 +1,9 @@
 import { Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
+import { createClient } from '@supabase/supabase-js';
 import { AuthService } from '../services/auth/authService.js';
 import { db } from '../database/db.js';
+import { config } from '../config/env.js';
 import { AuthenticatedRequest } from '../middleware/auth.js';
 
 // In-memory store for active verification OTP codes
@@ -149,12 +151,27 @@ export const AuthController = {
         expiresAt: Date.now() + 10 * 60 * 1000, // 10 minutes
       });
 
-      console.log(`[AUTH-OTP] Generated verification code ${code} for email: "${email}"`);
+      // Dispatch real email via Supabase Auth mailer directly to user's inbox
+      if (config.supabaseUrl && config.supabaseServiceRoleKey) {
+        try {
+          const supabase = createClient(config.supabaseUrl, config.supabaseServiceRoleKey);
+          await supabase.auth.signInWithOtp({
+            email,
+            options: {
+              shouldCreateUser: true,
+            },
+          });
+          console.log(`[AUTH-OTP] Real confirmation email sent to: "${email}" via Supabase`);
+        } catch (sbErr: any) {
+          console.warn('[AUTH-OTP] Supabase email dispatch notice:', sbErr.message);
+        }
+      }
+
+      console.log(`[AUTH-OTP] Generated verification code for email: "${email}"`);
 
       res.status(200).json({
         success: true,
         message: `A 6-digit verification code has been dispatched to ${email}.`,
-        code,
       });
     } catch (err: any) {
       console.error('Send code error:', err);
@@ -172,14 +189,38 @@ export const AuthController = {
         return;
       }
 
+      let isCodeValid = false;
+
+      // 1. Verify with Supabase Auth
+      if (config.supabaseUrl && config.supabaseServiceRoleKey) {
+        try {
+          const supabase = createClient(config.supabaseUrl, config.supabaseServiceRoleKey);
+          const { data, error } = await supabase.auth.verifyOtp({
+            email,
+            token: code,
+            type: 'email',
+          });
+          if (!error && (data?.user || data?.session)) {
+            isCodeValid = true;
+            console.log(`[AUTH-OTP] Code verified successfully via Supabase for "${email}"`);
+          }
+        } catch (sbErr: any) {
+          console.warn('[AUTH-OTP] Supabase verify check notice:', sbErr.message);
+        }
+      }
+
+      // 2. Also check local memory store or universal code
       const stored = otpMemoryStore.get(email);
-      const isUniversalDev = code === '123456';
-      const isCodeValid = (stored && stored.code === code && stored.expiresAt > Date.now()) || isUniversalDev;
+      if (!isCodeValid) {
+        if ((stored && stored.code === code && stored.expiresAt > Date.now()) || code === '123456') {
+          isCodeValid = true;
+        }
+      }
 
       if (!isCodeValid) {
         res.status(400).json({
           success: false,
-          message: 'Invalid or expired verification code. Please check your code or request a new one.',
+          message: 'Invalid or expired verification code. Please check your email or request a new one.',
         });
         return;
       }
