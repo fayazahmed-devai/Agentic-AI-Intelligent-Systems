@@ -10,6 +10,7 @@ import {
   BookOpen,
   ShieldCheck,
   Zap,
+  BrainCircuit,
 } from 'lucide-react';
 import { useFiles } from '../context/FileContext';
 
@@ -41,6 +42,12 @@ export default function Sidebar() {
       label: 'Connected Intelligence',
       badge: 'Core',
       highlight: true,
+    },
+    {
+      to: '/quiz',
+      icon: BrainCircuit,
+      label: 'AI Quiz Studio',
+      badge: 'Interactive',
     },
     {
       to: '/content-studio',

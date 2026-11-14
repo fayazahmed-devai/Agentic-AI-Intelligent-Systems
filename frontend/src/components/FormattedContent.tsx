@@ -322,3 +322,4 @@ export default function FormattedContent({ content, className = '' }: FormattedC
 
   return <div className={`space-y-1.5 text-slate-800 ${className}`}>{elements}</div>;
 }
+

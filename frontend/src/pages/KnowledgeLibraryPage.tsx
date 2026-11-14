@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useFiles } from '../context/FileContext';
 import {
   FolderOpen,
@@ -16,6 +16,7 @@ import {
   MessageSquareText,
   X,
   Upload,
+  BrainCircuit,
 } from 'lucide-react';
 import { FileRecord } from '../types';
 import FileUploaderModal from '../components/FileUploaderModal';
@@ -177,7 +178,15 @@ export default function KnowledgeLibraryPage() {
                   <span>Inspect Extractions</span>
                 </button>
 
-                <div className="flex items-center space-x-1">
+                <div className="flex items-center space-x-1.5">
+                  <Link
+                    to={`/quiz?fileId=${file.id}`}
+                    className="px-2 py-0.5 rounded-md bg-brand-violet/10 hover:bg-brand-violet/20 text-brand-violet font-bold text-[10px] flex items-center space-x-1 transition"
+                    title="Generate Interactive Quiz"
+                  >
+                    <BrainCircuit className="w-3 h-3" />
+                    <span>Quiz</span>
+                  </Link>
                   {file.processing_status === 'Failed' && (
                     <button
                       onClick={() => retryProcessing(file.id)}

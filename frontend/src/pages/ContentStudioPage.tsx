@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import api from '../services/api';
 import { useFiles } from '../context/FileContext';
 import FormattedContent from '../components/FormattedContent';
@@ -13,6 +14,7 @@ import {
   Printer,
   ArrowRight,
   FileText,
+  BrainCircuit,
 } from 'lucide-react';
 
 export default function ContentStudioPage() {
@@ -153,6 +155,25 @@ export default function ContentStudioPage() {
           );
         })}
       </div>
+
+      {selectedType === 'questions' && (
+        <div className="p-4 rounded-xl bg-brand-violet/10 border border-brand-violet/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-fadeIn">
+          <div className="flex items-center space-x-2.5">
+            <BrainCircuit className="w-5 h-5 text-brand-violet flex-shrink-0" />
+            <div>
+              <h4 className="text-xs font-bold text-navy-900">Want to play a live interactive quiz instead?</h4>
+              <p className="text-[11px] text-slate-500">Test yourself with live scoring, instant feedback, and 3D flashcards.</p>
+            </div>
+          </div>
+          <Link
+            to="/quiz"
+            className="px-4 py-2 rounded-lg bg-navy-900 hover:bg-navy-800 text-white text-xs font-bold shadow-sm transition flex items-center space-x-1.5 flex-shrink-0 self-start sm:self-auto"
+          >
+            <span>Launch Quiz Arena</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
+      )}
 
       {/* Prompt Form Card */}
       <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-4">

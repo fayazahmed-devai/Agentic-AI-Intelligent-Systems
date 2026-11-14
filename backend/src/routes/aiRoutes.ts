@@ -9,6 +9,8 @@ router.use(requireAuth);
 router.post('/chat', AIController.chat);
 router.post('/connected-intelligence', AIController.connectedIntelligence);
 router.post('/generate-content', AIController.generateContent);
+router.post('/generate-quiz', AIController.generateQuiz);
+router.post('/generate-flashcards', AIController.generateFlashcards);
 
 export default router;
 

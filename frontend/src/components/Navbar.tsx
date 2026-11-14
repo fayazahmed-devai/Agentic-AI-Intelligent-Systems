@@ -25,6 +25,7 @@ export default function Navbar({ onOpenUpload }: { onOpenUpload?: () => void }) 
     { to: '/library', label: 'Knowledge Library' },
     { to: '/chat', label: 'AI Assistant' },
     { to: '/connected-intelligence', label: 'Connected Intelligence' },
+    { to: '/quiz', label: 'AI Quiz Studio' },
     { to: '/content-studio', label: 'Content Studio' },
     { to: '/search', label: 'Search' },
     { to: '/docs', label: 'Documentation' },

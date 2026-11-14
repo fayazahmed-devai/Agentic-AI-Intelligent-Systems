@@ -197,5 +197,104 @@ export const AIController = {
       res.status(500).json({ success: false, message: 'Failed to generate studio content.' });
     }
   },
+
+  async generateQuiz(req: AuthenticatedRequest, res: Response): Promise<void> {
+    try {
+      const userId = req.user!.id;
+      const { topic = '', fileIds = [], count = 5, difficulty = 'medium' } = req.body;
+
+      const userFiles = await db.files.find({ user_id: userId, processing_status: 'Processed' });
+      const targetFiles = fileIds.length > 0 ? userFiles.filter((f) => fileIds.includes(f.id)) : userFiles;
+
+      if (targetFiles.length === 0) {
+        res.status(400).json({
+          success: false,
+          message: 'No processed files found in your workspace to generate a quiz from.',
+        });
+        return;
+      }
+
+      let cleanTopic = topic.trim();
+      if (!cleanTopic) {
+        cleanTopic = targetFiles.map((f) => f.original_name.replace(/\.[^/.]+$/, '')).join(' & ') + ' Quiz';
+      }
+
+      const sources = await RetrievalService.searchRelevantEvidence(
+        userId,
+        cleanTopic,
+        targetFiles.map((f) => f.id),
+        12
+      );
+
+      const questions = await GeminiService.generateQuizQuestions({
+        topic: cleanTopic,
+        sources,
+        count: Number(count) || 5,
+        difficulty,
+      });
+
+      res.status(200).json({
+        success: true,
+        data: {
+          title: cleanTopic,
+          files: targetFiles.map((f) => ({ id: f.id, name: f.original_name })),
+          questionCount: questions.length,
+          questions,
+        },
+      });
+    } catch (error: any) {
+      console.error('Quiz generation error:', error);
+      res.status(500).json({ success: false, message: 'Failed to generate quiz questions.' });
+    }
+  },
+
+  async generateFlashcards(req: AuthenticatedRequest, res: Response): Promise<void> {
+    try {
+      const userId = req.user!.id;
+      const { topic = '', fileIds = [], count = 6 } = req.body;
+
+      const userFiles = await db.files.find({ user_id: userId, processing_status: 'Processed' });
+      const targetFiles = fileIds.length > 0 ? userFiles.filter((f) => fileIds.includes(f.id)) : userFiles;
+
+      if (targetFiles.length === 0) {
+        res.status(400).json({
+          success: false,
+          message: 'No processed files found to generate flashcards from.',
+        });
+        return;
+      }
+
+      let cleanTopic = topic.trim();
+      if (!cleanTopic) {
+        cleanTopic = targetFiles.map((f) => f.original_name.replace(/\.[^/.]+$/, '')).join(' & ') + ' Flashcards';
+      }
+
+      const sources = await RetrievalService.searchRelevantEvidence(
+        userId,
+        cleanTopic,
+        targetFiles.map((f) => f.id),
+        12
+      );
+
+      const flashcards = await GeminiService.generateFlashcards({
+        topic: cleanTopic,
+        sources,
+        count: Number(count) || 6,
+      });
+
+      res.status(200).json({
+        success: true,
+        data: {
+          title: cleanTopic,
+          files: targetFiles.map((f) => ({ id: f.id, name: f.original_name })),
+          cardCount: flashcards.length,
+          flashcards,
+        },
+      });
+    } catch (error: any) {
+      console.error('Flashcard generation error:', error);
+      res.status(500).json({ success: false, message: 'Failed to generate flashcards.' });
+    }
+  },
 };
 

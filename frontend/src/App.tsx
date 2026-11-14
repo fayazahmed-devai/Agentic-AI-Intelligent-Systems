@@ -15,6 +15,7 @@ import KnowledgeLibraryPage from './pages/KnowledgeLibraryPage';
 import ChatPage from './pages/ChatPage';
 import ConnectedIntelligencePage from './pages/ConnectedIntelligencePage';
 import ContentStudioPage from './pages/ContentStudioPage';
+import QuizStudioPage from './pages/QuizStudioPage';
 import GlobalSearchPage from './pages/GlobalSearchPage';
 import DocumentationPage from './pages/DocumentationPage';
 
@@ -110,6 +111,16 @@ export default function App() {
                 <ProtectedRoute>
                   <MainLayout>
                     <ContentStudioPage />
+                  </MainLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/quiz"
+              element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <QuizStudioPage />
                   </MainLayout>
                 </ProtectedRoute>
               }

@@ -19,6 +19,7 @@ import {
   ExternalLink,
   ArrowRight,
   TrendingUp,
+  BrainCircuit,
 } from 'lucide-react';
 import {
   PieChart,
@@ -134,7 +135,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Main Actions Bar (Section 6) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5">
         <button
           onClick={() => setUploaderOpen(true)}
           className="p-4 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 shadow-sm transition text-left flex items-center justify-between group"
@@ -155,6 +156,17 @@ export default function DashboardPage() {
             <p className="text-[11px] text-slate-500">Ask questions with citations</p>
           </div>
           <MessageSquareText className="w-4 h-4 text-slate-400 group-hover:text-navy-900 transition" />
+        </Link>
+
+        <Link
+          to="/quiz"
+          className="p-4 rounded-xl bg-white hover:bg-slate-50 border border-brand-violet/30 bg-brand-violet/5 shadow-sm transition text-left flex items-center justify-between group"
+        >
+          <div className="space-y-0.5">
+            <h4 className="text-xs font-bold text-brand-violet">AI Quiz Studio</h4>
+            <p className="text-[11px] text-slate-500">Playable quizzes from PDFs</p>
+          </div>
+          <BrainCircuit className="w-4 h-4 text-brand-violet group-hover:scale-110 transition" />
         </Link>
 
         <Link
