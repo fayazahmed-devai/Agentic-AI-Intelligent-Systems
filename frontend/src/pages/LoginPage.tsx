@@ -29,7 +29,9 @@ export default function LoginPage() {
   const [errorMsg, setErrorMsg] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [forgotModalOpen, setForgotModalOpen] = useState(false);
-  const [backendUrlInput, setBackendUrlInput] = useState('');
+  const [backendUrlInput, setBackendUrlInput] = useState(() => {
+    return localStorage.getItem('nexusmind_backend_url') || 'https://agentic-ai-intelligent-systems.onrender.com';
+  });
   const [showBackendInput, setShowBackendInput] = useState(false);
   const [backendSavedMsg, setBackendSavedMsg] = useState('');
 
@@ -478,16 +480,30 @@ export default function LoginPage() {
               <span>{showBackendInput ? 'Hide Backend Settings' : 'Connect Render Backend URL'}</span>
             </button>
             {showBackendInput && (
-              <div className="mt-2 p-3 rounded-xl bg-slate-50 border border-slate-200 text-left space-y-2">
-                <label className="text-[10px] font-bold text-slate-600 uppercase tracking-wider block">
-                  Render Live Backend URL
-                </label>
+              <div className="mt-2 p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-left space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <label className="text-[10px] font-bold text-slate-600 uppercase tracking-wider block">
+                    Render Live Backend URL
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setBackendUrlInput('https://agentic-ai-intelligent-systems.onrender.com');
+                      setCustomBackendUrl('https://agentic-ai-intelligent-systems.onrender.com');
+                      setBackendSavedMsg('Connected to Render backend!');
+                      setTimeout(() => setBackendSavedMsg(''), 2500);
+                    }}
+                    className="text-[10px] font-bold text-brand-violet hover:underline"
+                  >
+                    Use Default Render URL
+                  </button>
+                </div>
                 <div className="flex items-center gap-2">
                   <input
                     type="text"
                     value={backendUrlInput}
                     onChange={(e) => setBackendUrlInput(e.target.value)}
-                    placeholder="https://your-service.onrender.com"
+                    placeholder="https://agentic-ai-intelligent-systems.onrender.com"
                     className="flex-1 px-2.5 py-1.5 text-xs bg-white border border-slate-300 rounded-lg text-slate-800 focus:outline-none focus:border-navy-900"
                   />
                   <button
@@ -496,7 +512,7 @@ export default function LoginPage() {
                     disabled={!backendUrlInput.trim()}
                     className="px-3 py-1.5 bg-navy-900 hover:bg-navy-800 disabled:opacity-50 text-white font-bold text-[11px] rounded-lg transition"
                   >
-                    Save
+                    Save & Connect
                   </button>
                 </div>
                 {backendSavedMsg && (

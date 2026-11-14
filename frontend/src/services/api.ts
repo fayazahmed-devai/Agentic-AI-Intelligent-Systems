@@ -27,7 +27,7 @@ export function setCustomBackendUrl(url: string): void {
 const api = axios.create({
   baseURL: getBaseURL(),
   withCredentials: true,
-  timeout: 120000,
+  timeout: 8000,
 });
 
 api.interceptors.request.use(
@@ -61,7 +61,9 @@ api.interceptors.response.use(
       }
     }
     let message = error.response?.data?.message || error.message || 'An error occurred';
-    if (error.response?.status === 404 && (!error.response?.data || typeof error.response.data === 'string' || !error.response.data.message)) {
+    if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
+      message = 'Backend connection timed out (8s). Using offline mode.';
+    } else if (error.response?.status === 404 && (!error.response?.data || typeof error.response.data === 'string' || !error.response.data.message)) {
       message = 'Backend API endpoint not reachable (404). Please ensure your Render backend is running and linked via VITE_API_URL in Vercel.';
     }
     return Promise.reject(new Error(message));
