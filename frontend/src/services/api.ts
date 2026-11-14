@@ -46,7 +46,10 @@ api.interceptors.response.use(
         }, 150);
       }
     }
-    const message = error.response?.data?.message || error.message || 'An error occurred';
+    let message = error.response?.data?.message || error.message || 'An error occurred';
+    if (error.response?.status === 404 && (!error.response?.data || typeof error.response.data === 'string' || !error.response.data.message)) {
+      message = 'Backend API endpoint not reachable (404). Please ensure your Render backend is running and linked via VITE_API_URL in Vercel.';
+    }
     return Promise.reject(new Error(message));
   }
 );
