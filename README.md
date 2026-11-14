@@ -8,6 +8,11 @@
 
 > **Tagline**: One Workspace. Every Format. Connected Intelligence.
 
+### 🌐 Live Production Deployments
+* **Live Web Application (Vercel)**: [https://agentic-ai-intelligent-systems-six.vercel.app](https://agentic-ai-intelligent-systems-six.vercel.app)
+* **Workspace Dashboard**: [https://agentic-ai-intelligent-systems-six.vercel.app/dashboard](https://agentic-ai-intelligent-systems-six.vercel.app/dashboard)
+* **Backend API Service (Render)**: [https://agentic-ai-intelligent-systems.onrender.com](https://agentic-ai-intelligent-systems.onrender.com)
+
 ---
 
 ## 📌 1. Problem Statement

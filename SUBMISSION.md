@@ -2,6 +2,9 @@
 
 **Application Name**: NexusMind AI  
 **Tagline**: One Workspace. Every Format. Connected Intelligence.  
+**Live Production Deployment (Vercel)**: [https://agentic-ai-intelligent-systems-six.vercel.app](https://agentic-ai-intelligent-systems-six.vercel.app)  
+**Workspace Dashboard**: [https://agentic-ai-intelligent-systems-six.vercel.app/dashboard](https://agentic-ai-intelligent-systems-six.vercel.app/dashboard)  
+**Backend API (Render)**: [https://agentic-ai-intelligent-systems.onrender.com](https://agentic-ai-intelligent-systems.onrender.com)  
 **Tech Stack**: React 18, Vite 5, TypeScript, Tailwind CSS, Node.js v24, Express, JWT, bcrypt, Zod, Multer, Supabase PostgreSQL & Storage, Google Gemini 1.5 Flash.
 
 ---
