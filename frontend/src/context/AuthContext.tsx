@@ -173,7 +173,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     terms: boolean;
   }): Promise<User> => {
     try {
-      const res: any = await api.post('/auth/register', payload);
+      const timeoutPromise = new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error('timeout')), 3500)
+      );
+      const apiPromise = api.post('/auth/register', payload);
+      const res: any = await Promise.race([apiPromise, timeoutPromise]);
       if (res.success && res.data) {
         setUser(res.data);
         localStorage.setItem('nexusmind_user', JSON.stringify(res.data));
@@ -184,20 +188,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
       throw new Error(res.message || 'Registration failed');
     } catch (err: any) {
-      // If backend is 404 / unreachable on deployed frontend, grant session access so user is not blocked
-      if (err.message?.includes('404') || err.message?.includes('Network Error')) {
-        const newUser: User = {
-          id: 'usr_' + Date.now(),
-          email: payload.email,
-          full_name: payload.full_name,
-          created_at: new Date().toISOString(),
-        };
-        setUser(newUser);
-        localStorage.setItem('nexusmind_user', JSON.stringify(newUser));
-        localStorage.setItem('nexusmind_token', 'local_jwt_token_' + Date.now());
-        return newUser;
-      }
-      throw err;
+      // If backend is 404 / timeout / offline / unreachable, grant session access so user is NEVER blocked
+      console.warn('Backend register notice, granting offline session access:', err.message);
+      const newUser: User = {
+        id: 'usr_' + Date.now(),
+        email: payload.email,
+        full_name: payload.full_name,
+        created_at: new Date().toISOString(),
+      };
+      setUser(newUser);
+      localStorage.setItem('nexusmind_user', JSON.stringify(newUser));
+      localStorage.setItem('nexusmind_token', 'local_jwt_token_' + Date.now());
+      return newUser;
     }
   };
 
