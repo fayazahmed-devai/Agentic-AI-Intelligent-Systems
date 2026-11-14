@@ -151,11 +151,82 @@ export default function DocumentationPage() {
         </div>
       </section>
 
-      {/* 3. System Architecture & Technical Specifications */}
+      {/* 3. Advanced Intelligence Architecture (Part 2 Suite) */}
+      <section className="space-y-4">
+        <h2 className="text-xl font-bold text-navy-900 flex items-center space-x-2">
+          <span className="w-7 h-7 rounded-lg bg-brand-violet text-white flex items-center justify-center text-xs font-mono">
+            3
+          </span>
+          <span>Advanced Intelligence Suite (Part 2 Architecture)</span>
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-2">
+            <div className="font-bold text-navy-900 text-xs flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-violet-600"></span>
+              AI Knowledge Detective (/detective)
+            </div>
+            <p className="text-[11px] text-slate-500 leading-relaxed">
+              Conducts cross-modal forensic investigations across document text, OCR annotations, and audio transcripts. Detects contradictions and synthesizes forensic evidence reports with verifiable citations.
+            </p>
+          </div>
+
+          <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-2">
+            <div className="font-bold text-navy-900 text-xs flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-blue-600"></span>
+              Interactive Knowledge Graph (/graph)
+            </div>
+            <p className="text-[11px] text-slate-500 leading-relaxed">
+              Topological visualization mapping concepts, theories, and formulas into an interactive graph with zoom/pan, modality filters, and click-to-explain AI drawers.
+            </p>
+          </div>
+
+          <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-2">
+            <div className="font-bold text-navy-900 text-xs flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-rose-600"></span>
+              AI Voice Assistant (/voice)
+            </div>
+            <p className="text-[11px] text-slate-500 leading-relaxed">
+              Real-time hands-free oral conversation powered by Web Speech Recognition and SpeechSynthesis, featuring an animated visualizer orb and grounded library Q&A.
+            </p>
+          </div>
+
+          <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-2">
+            <div className="font-bold text-navy-900 text-xs flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-amber-600"></span>
+              Learning Mentor (/mentor)
+            </div>
+            <p className="text-[11px] text-slate-500 leading-relaxed">
+              Calibrates pedagogical explanations into 5 comprehension depths (Beginner, Simple, University, Technical, Exam-Oriented) and maintains an adaptive topic mastery tracker.
+            </p>
+          </div>
+
+          <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-2">
+            <div className="font-bold text-navy-900 text-xs flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-emerald-600"></span>
+              Evidence & Trust Centre (/evidence)
+            </div>
+            <p className="text-[11px] text-slate-500 leading-relaxed">
+              Performs scientific claim verification with a 4-tier matrix (Supported, Partially Supported, Conflicting, Insufficient), displaying exact verbatim quotes and timestamps.
+            </p>
+          </div>
+
+          <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-2">
+            <div className="font-bold text-navy-900 text-xs flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-indigo-600"></span>
+              Autonomous Research Agent (/research-agent)
+            </div>
+            <p className="text-[11px] text-slate-500 leading-relaxed">
+              Dispatches a 5-step autonomous agent that decomposes research hypotheses, scans literature, correlates findings, identifies knowledge gaps, and compiles downloadable markdown dossiers.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* 4. System Architecture & Technical Specifications */}
       <section className="space-y-4">
         <h2 className="text-xl font-bold text-navy-900 flex items-center space-x-2">
           <span className="w-7 h-7 rounded-lg bg-brand-teal text-white flex items-center justify-center text-xs font-mono">
-            3
+            4
           </span>
           <span>Technical Architecture</span>
         </h2>

@@ -62,7 +62,7 @@ export default function RegisterPage() {
             Create Your Account
           </h1>
           <p className="text-xs text-slate-500">
-            One Workspace. Every Format. Connected Intelligence.
+            Don't just store information. Make it intelligent.
           </p>
         </div>
 

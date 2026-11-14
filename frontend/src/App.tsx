@@ -19,6 +19,14 @@ import QuizStudioPage from './pages/QuizStudioPage';
 import GlobalSearchPage from './pages/GlobalSearchPage';
 import DocumentationPage from './pages/DocumentationPage';
 
+// Advanced Part 2 Feature Pages
+import DetectivePage from './pages/DetectivePage';
+import KnowledgeGraphPage from './pages/KnowledgeGraphPage';
+import VoiceAssistantPage from './pages/VoiceAssistantPage';
+import LearningMentorPage from './pages/LearningMentorPage';
+import EvidenceTrustPage from './pages/EvidenceTrustPage';
+import ResearchAgentPage from './pages/ResearchAgentPage';
+
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, loading } = useAuth();
 
@@ -64,7 +72,7 @@ export default function App() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
 
-            {/* Protected Workspace Pages */}
+            {/* Core Workspace Pages */}
             <Route
               path="/dashboard"
               element={
@@ -105,22 +113,86 @@ export default function App() {
                 </ProtectedRoute>
               }
             />
+
+            {/* Advanced Intelligence Pages (Part 2) */}
             <Route
-              path="/content-studio"
+              path="/detective"
               element={
                 <ProtectedRoute>
                   <MainLayout>
-                    <ContentStudioPage />
+                    <DetectivePage />
                   </MainLayout>
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/graph"
+              element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <KnowledgeGraphPage />
+                  </MainLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/voice"
+              element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <VoiceAssistantPage />
+                  </MainLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/mentor"
+              element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <LearningMentorPage />
+                  </MainLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/evidence"
+              element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <EvidenceTrustPage />
+                  </MainLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/research-agent"
+              element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <ResearchAgentPage />
+                  </MainLayout>
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Studio & Search Pages */}
             <Route
               path="/quiz"
               element={
                 <ProtectedRoute>
                   <MainLayout>
                     <QuizStudioPage />
+                  </MainLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/content-studio"
+              element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <ContentStudioPage />
                   </MainLayout>
                 </ProtectedRoute>
               }
@@ -153,4 +225,3 @@ export default function App() {
     </BrowserRouter>
   );
 }
-

@@ -90,3 +90,91 @@ export interface DashboardStats {
   modalityCounts: Record<FileModality, number>;
 }
 
+export interface Investigation {
+  id: string;
+  user_id: string;
+  query: string;
+  target_files: string[];
+  detected_concepts: string[];
+  modality_findings: Record<string, string>;
+  contradictions: string[];
+  final_report: string;
+  sources: {
+    file_id: string;
+    file_name: string;
+    modality: string;
+    citation: string;
+    text: string;
+  }[];
+  created_at: string;
+}
+
+export interface KnowledgeNode {
+  id: string;
+  user_id: string;
+  label: string;
+  category: 'concept' | 'topic' | 'document' | 'formula';
+  modality?: FileModality;
+  file_id?: string | null;
+  details?: string;
+  importance: number;
+  created_at: string;
+}
+
+export interface KnowledgeEdge {
+  id: string;
+  user_id: string;
+  source_id: string;
+  target_id: string;
+  relationship: string;
+  evidence?: string;
+  created_at: string;
+}
+
+export interface ResearchPlanStep {
+  step: number;
+  title: string;
+  description: string;
+  status: 'pending' | 'in_progress' | 'completed';
+  findings?: string;
+}
+
+export interface ResearchTask {
+  id: string;
+  user_id: string;
+  objective: string;
+  plan_steps: ResearchPlanStep[];
+  current_step: number;
+  findings: string[];
+  status: 'planning' | 'in_progress' | 'completed' | 'cancelled';
+  final_dossier?: string;
+  sources: { file_name: string; citation: string; snippet: string }[];
+  created_at: string;
+  updated_at: string;
+}
+
+export interface LearningProgress {
+  id: string;
+  user_id: string;
+  topic: string;
+  mastery_percentage: number;
+  quizzes_attempted: number;
+  correct_answers: number;
+  topics_revised: string[];
+  recommended_next: string[];
+  last_studied_at: string;
+}
+
+export interface UserPreferences {
+  id: string;
+  user_id: string;
+  language: 'en' | 'hi' | 'kn' | 'ur' | 'ml';
+  theme: 'light' | 'dark';
+  speech_rate: number;
+  auto_speak: boolean;
+  study_goal: string;
+  created_at: string;
+  updated_at: string;
+}
+
+

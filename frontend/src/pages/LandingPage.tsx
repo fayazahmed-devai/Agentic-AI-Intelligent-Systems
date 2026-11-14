@@ -42,9 +42,9 @@ export default function LandingPage() {
           </div>
 
           <h1 className="text-4xl md:text-6xl font-black text-navy-900 tracking-tight leading-[1.15]">
-            One Workspace. Every Format.{' '}
+            Don't just store information.{' '}
             <span className="bg-gradient-to-r from-navy-900 via-brand-violet to-brand-teal bg-clip-text text-transparent">
-              Connected Intelligence.
+              Make it intelligent.
             </span>
           </h1>
 
@@ -194,7 +194,7 @@ export default function LandingPage() {
           <div className="flex items-center space-x-2">
             <span className="font-bold text-navy-900">NexusMind AI</span>
             <span>•</span>
-            <span>One Workspace. Every Format. Connected Intelligence.</span>
+            <span>Don't just store information. Make it intelligent.</span>
           </div>
           <div className="flex space-x-4">
             <Link to="/docs" className="hover:text-navy-900">Documentation</Link>

@@ -304,7 +304,7 @@ By synthesizing your materials (${fileNamesList}), learners and researchers gain
     topic,
     sources,
   }: {
-    type: 'summary' | 'study_notes' | 'questions' | 'action_items' | 'comparison';
+    type: 'summary' | 'study_notes' | 'questions' | 'action_items' | 'comparison' | 'presentation_slides' | 'research_report';
     topic: string;
     sources: RankedSource[];
   }) {
@@ -323,6 +323,18 @@ By synthesizing your materials (${fileNamesList}), learners and researchers gain
       instruction = `Extract all Action Items, operational tasks, and a prioritized checklist based strictly on the materials.`;
     } else if (type === 'comparison') {
       instruction = `Compare the provided sources: Similarities, Differences, and Cross-modal insights based strictly on the materials.`;
+    } else if (type === 'presentation_slides') {
+      instruction = `Generate an 8-slide Professional Academic Presentation Deck. Structure each slide clearly:
+---
+Slide [Number]: [Catchy Slide Title]
+- **Key Point 1**: Concise explanation
+- **Key Point 2**: Quantitative/Theoretical detail
+- **Visual Cue / Diagram Recommendation**: What graph, schematic, or diagram to present
+- **Speaker Notes**: Exactly what the presenter should say to explain this slide
+---
+Ground all slides strictly in the evidence provided.`;
+    } else if (type === 'research_report') {
+      instruction = `Generate a formal Research & Technical Report with Abstract, Problem Formulation, Literature Context from uploaded files, Theoretical Derivations & Calculations, Critical Discussion, Limitations, and Grounded Source Citations.`;
     }
 
     const prompt = `You are the Content Studio in NexusMind AI. Topic: "${topic}".\n${instruction}\n\nREADABILITY: Do not use raw LaTeX commands or dollar signs. Use clean Unicode characters (Ω, A, V, W, ≈, etc.).\n\nEvidence:\n${evidenceText}`;

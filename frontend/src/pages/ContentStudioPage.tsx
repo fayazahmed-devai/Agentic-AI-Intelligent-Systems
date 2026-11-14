@@ -15,12 +15,14 @@ import {
   ArrowRight,
   FileText,
   BrainCircuit,
+  Presentation,
+  FileCode2,
 } from 'lucide-react';
 
 export default function ContentStudioPage() {
   const { files } = useFiles();
   const [selectedType, setSelectedType] = useState<
-    'summary' | 'study_notes' | 'questions' | 'action_items' | 'comparison'
+    'summary' | 'study_notes' | 'questions' | 'action_items' | 'comparison' | 'presentation_slides' | 'research_report'
   >('questions');
   const [topic, setTopic] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
@@ -39,6 +41,18 @@ export default function ContentStudioPage() {
       icon: BookOpen,
       title: 'Study & Revision Notes',
       desc: 'Topic-wise breakdown and simple explanations',
+    },
+    {
+      id: 'presentation_slides',
+      icon: Presentation,
+      title: 'Presentation Slides',
+      desc: '8-slide academic deck with speaker cues',
+    },
+    {
+      id: 'research_report',
+      icon: FileCode2,
+      title: 'Research Report',
+      desc: 'Formal academic report with derivations & citations',
     },
     {
       id: 'summary',

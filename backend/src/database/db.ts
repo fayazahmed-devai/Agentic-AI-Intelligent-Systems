@@ -11,6 +11,12 @@ import {
   Message,
   MessageSource,
   GeneratedContent,
+  Investigation,
+  KnowledgeNode,
+  KnowledgeEdge,
+  ResearchTask,
+  LearningProgress,
+  UserPreferences,
 } from '../types/index.js';
 
 // Regex to validate UUID format
@@ -379,6 +385,12 @@ const localConversations = new PersistentStore<Conversation>('conversations', da
 const localMessages = new PersistentStore<Message>('messages', dataStorePath);
 const localMessageSources = new PersistentStore<MessageSource>('messageSources', dataStorePath);
 const localGeneratedContent = new PersistentStore<GeneratedContent>('generatedContent', dataStorePath);
+const localInvestigations = new PersistentStore<Investigation>('investigations', dataStorePath);
+const localKnowledgeNodes = new PersistentStore<KnowledgeNode>('knowledgeNodes', dataStorePath);
+const localKnowledgeEdges = new PersistentStore<KnowledgeEdge>('knowledgeEdges', dataStorePath);
+const localResearchTasks = new PersistentStore<ResearchTask>('researchTasks', dataStorePath);
+const localLearningProgress = new PersistentStore<LearningProgress>('learningProgress', dataStorePath);
+const localUserPreferences = new PersistentStore<UserPreferences>('userPreferences', dataStorePath);
 
 export const db = {
   users: new SqlTable<User>('users', localUsers, supabaseClient),
@@ -388,6 +400,12 @@ export const db = {
   messages: new SqlTable<Message>('messages', localMessages, supabaseClient),
   messageSources: new SqlTable<MessageSource>('message_sources', localMessageSources, supabaseClient),
   generatedContent: new SqlTable<GeneratedContent>('generated_content', localGeneratedContent, supabaseClient),
+  investigations: new SqlTable<Investigation>('investigations', localInvestigations, supabaseClient),
+  knowledgeNodes: new SqlTable<KnowledgeNode>('knowledge_nodes', localKnowledgeNodes, supabaseClient),
+  knowledgeEdges: new SqlTable<KnowledgeEdge>('knowledge_edges', localKnowledgeEdges, supabaseClient),
+  researchTasks: new SqlTable<ResearchTask>('research_tasks', localResearchTasks, supabaseClient),
+  learningProgress: new SqlTable<LearningProgress>('learning_progress', localLearningProgress, supabaseClient),
+  userPreferences: new SqlTable<UserPreferences>('user_preferences', localUserPreferences, supabaseClient),
 };
 
 export async function initDatabase(): Promise<void> {
