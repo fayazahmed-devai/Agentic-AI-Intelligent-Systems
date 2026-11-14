@@ -64,6 +64,7 @@ export default function QuizStudioPage() {
 
   // Loading & State
   const [isGenerating, setIsGenerating] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [quizQuestions, setQuizQuestions] = useState<QuizQuestion[]>([]);
   const [flashcards, setFlashcards] = useState<Flashcard[]>([]);
 
@@ -97,6 +98,7 @@ export default function QuizStudioPage() {
   // 1. Generate Quiz
   const handleGenerateQuiz = async () => {
     try {
+      setError(null);
       setIsGenerating(true);
       const effectiveTopic =
         topic.trim() ||
@@ -126,7 +128,8 @@ export default function QuizStudioPage() {
         } catch {}
       }
     } catch (err: any) {
-      alert(err.message || 'Failed to generate quiz');
+      console.error('Quiz generation error:', err);
+      setError(err.message || 'Failed to generate quiz');
     } finally {
       setIsGenerating(false);
     }
@@ -135,6 +138,7 @@ export default function QuizStudioPage() {
   // 2. Generate Flashcards
   const handleGenerateFlashcards = async () => {
     try {
+      setError(null);
       setIsGenerating(true);
       const effectiveTopic =
         topic.trim() ||
@@ -155,7 +159,8 @@ export default function QuizStudioPage() {
         setMasteredCards(new Set());
       }
     } catch (err: any) {
-      alert(err.message || 'Failed to generate flashcards');
+      console.error('Flashcard generation error:', err);
+      setError(err.message || 'Failed to generate flashcards');
     } finally {
       setIsGenerating(false);
     }
@@ -358,6 +363,22 @@ export default function QuizStudioPage() {
             </select>
           </div>
         </div>
+
+        {error && (
+          <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
+              <span>{error}</span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setError(null)}
+              className="text-rose-600 hover:text-rose-900 font-bold ml-3 text-[11px] underline"
+            >
+              Dismiss
+            </button>
+          </div>
+        )}
 
         {/* Generate Action Button */}
         <div className="flex justify-end pt-2">

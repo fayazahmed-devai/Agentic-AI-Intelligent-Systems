@@ -27,6 +27,7 @@ export default function ConnectedIntelligencePage() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [result, setResult] = useState<any>(null);
   const [copied, setCopied] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const toggleFileSelect = (id: string) => {
     setSelectedFileIds((prev) =>
@@ -38,6 +39,7 @@ export default function ConnectedIntelligencePage() {
 
   const runAnalysis = async () => {
     try {
+      setError(null);
       setIsGenerating(true);
       let effectiveTopic = topic.trim();
       if (!effectiveTopic) {
@@ -66,7 +68,8 @@ export default function ConnectedIntelligencePage() {
         } catch {}
       }
     } catch (err: any) {
-      alert(err.message || 'Analysis failed');
+      console.error('Connected intelligence error:', err);
+      setError(err.message || 'Analysis could not be completed. Please try again.');
     } finally {
       setIsGenerating(false);
     }
@@ -227,6 +230,22 @@ export default function ConnectedIntelligencePage() {
             })}
           </div>
         </div>
+
+        {error && (
+          <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-750 text-xs font-semibold flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
+              <span>{error}</span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setError(null)}
+              className="text-rose-600 hover:text-rose-900 font-bold ml-3 text-[11px] underline"
+            >
+              Dismiss
+            </button>
+          </div>
+        )}
 
         <div className="pt-2 flex justify-end">
           <button

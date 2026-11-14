@@ -53,26 +53,36 @@ export function cleanLatexAndFormatting(raw: string): string {
     .trim();
 }
 
-// Helper to call Gemini with automatic model fallback
+// Helper to call Gemini with automatic model fallback and strict per-model timeout
 async function callGemini(prompt: string, maxTokens = 3000): Promise<string | null> {
   const client = getGenAIClient();
   if (!client) return null;
 
   const candidateModels = [
-    config.geminiModel || 'gemini-3.5-flash-lite',
+    config.geminiModel || 'gemini-3.1-flash-lite',
+    'gemini-3.1-flash-lite',
     'gemini-3.5-flash-lite',
-    'gemini-flash-latest',
-    'gemini-3-flash-preview',
-    'gemini-2.5-pro',
+    'gemini-flash-lite-latest',
+    'gemini-3.5-flash',
   ];
 
-  for (const modelName of candidateModels) {
+  // Deduplicate candidate models
+  const uniqueModels = Array.from(new Set(candidateModels.filter(Boolean)));
+
+  for (const modelName of uniqueModels) {
     try {
       const model = client.getGenerativeModel({
         model: modelName,
         generationConfig: { temperature: 0.3, maxOutputTokens: maxTokens },
       });
-      const result = await model.generateContent(prompt);
+
+      // Strict 10-second timeout per attempt to guarantee immediate fallback without stalling
+      const generatePromise = model.generateContent(prompt);
+      const timeoutPromise = new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error(`Timeout after 10000ms for ${modelName}`)), 10000)
+      );
+
+      const result = await Promise.race([generatePromise, timeoutPromise]);
       const text = result.response.text();
       if (text && text.trim().length > 0) {
         return cleanLatexAndFormatting(text);

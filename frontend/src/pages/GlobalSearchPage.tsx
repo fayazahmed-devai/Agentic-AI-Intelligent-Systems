@@ -19,6 +19,7 @@ export default function GlobalSearchPage() {
   const [results, setResults] = useState<SearchResultItem[]>([]);
   const [hasSearched, setHasSearched] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -35,6 +36,7 @@ export default function GlobalSearchPage() {
     if (!q) return;
 
     try {
+      setError(null);
       setIsSearching(true);
       const res: any = await api.get(`/search?q=${encodeURIComponent(q)}`);
       if (res.success && res.data) {
@@ -42,7 +44,8 @@ export default function GlobalSearchPage() {
       }
       setHasSearched(true);
     } catch (err: any) {
-      alert(err.message || 'Search failed');
+      console.error('Search error:', err);
+      setError(err.message || 'Search failed. Please try again.');
     } finally {
       setIsSearching(false);
     }
@@ -86,6 +89,19 @@ export default function GlobalSearchPage() {
           {isSearching ? 'Searching...' : 'Search'}
         </button>
       </form>
+
+      {error && (
+        <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold flex items-center justify-between">
+          <span>{error}</span>
+          <button
+            type="button"
+            onClick={() => setError(null)}
+            className="text-rose-600 hover:text-rose-900 font-bold ml-3 text-[11px] underline"
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
 
       {/* Results List */}
       {hasSearched && (

@@ -26,6 +26,7 @@ export default function ContentStudioPage() {
   >('questions');
   const [topic, setTopic] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [generatedText, setGeneratedText] = useState<string>('');
   const [copied, setCopied] = useState(false);
 
@@ -76,6 +77,7 @@ export default function ContentStudioPage() {
 
   const handleGenerate = async () => {
     try {
+      setError(null);
       setIsGenerating(true);
       const effectiveTopic =
         topic.trim() ||
@@ -93,7 +95,8 @@ export default function ContentStudioPage() {
         setGeneratedText(res.data.content);
       }
     } catch (err: any) {
-      alert(err.message || 'Generation failed');
+      console.error('Content generation error:', err);
+      setError(err.message || 'Generation failed. Please try again.');
     } finally {
       setIsGenerating(false);
     }
@@ -201,6 +204,22 @@ export default function ContentStudioPage() {
             className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:border-navy-900 transition font-medium"
           />
         </div>
+
+        {error && (
+          <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
+              <span>{error}</span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setError(null)}
+              className="text-rose-600 hover:text-rose-900 font-bold ml-3 text-[11px] underline"
+            >
+              Dismiss
+            </button>
+          </div>
+        )}
 
         <div className="flex justify-between items-center text-xs pt-1">
           <span className="text-slate-500">

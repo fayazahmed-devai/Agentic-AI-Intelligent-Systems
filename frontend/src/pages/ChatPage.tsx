@@ -111,7 +111,16 @@ export default function ChatPage() {
         setMessages((prev) => [...prev.filter((m) => m.id !== tempUserMsg.id), tempUserMsg, assistantMsg]);
       }
     } catch (err: any) {
-      alert(err.message || 'AI request failed');
+      console.error('Chat error:', err);
+      const errorMsg: Message = {
+        id: 'err_' + Date.now(),
+        conversation_id: activeConvId || '',
+        user_id: '',
+        role: 'assistant',
+        content: `⚠️ **Request Notice**: ${err.message || 'Unable to complete AI response at this moment.'} Please try asking again or select specific files.`,
+        created_at: new Date().toISOString(),
+      };
+      setMessages((prev) => [...prev, errorMsg]);
     } finally {
       setIsSending(false);
     }
