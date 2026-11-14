@@ -28,6 +28,7 @@ function ensureUUID(id?: string): string {
   }
   // Deterministic mapping for sample demo keys
   if (id === 'usr_demo_evaluator') return '00000000-0000-4000-a000-000000000001';
+  if (id === 'usr_attarfayaz') return '00000000-0000-4000-a000-000000000099';
   if (id === 'file_demo_doc') return '00000000-0000-4000-a000-000000000002';
   if (id === 'file_demo_img') return '00000000-0000-4000-a000-000000000003';
   if (id === 'file_demo_audio') return '00000000-0000-4000-a000-000000000004';
