@@ -1,0 +1,164 @@
+{
+  "info": {
+    "name": "NexusMind AI - REST API Collection",
+    "_postman_id": "a93bf81d-84f2-4e02-9cf1-8c430e620d41",
+    "description": "Comprehensive Postman/Bruno test collection for NexusMind AI Multimodal Knowledge Assistant.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "System Health",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/health",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "health"]
+        }
+      }
+    },
+    {
+      "name": "Auth - Register",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"full_name\": \"Dr. Alan Turing\",\n  \"email\": \"evaluator@domain.com\",\n  \"password\": \"Password123!\",\n  \"confirm_password\": \"Password123!\",\n  \"terms\": true\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/register",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "auth", "register"]
+        }
+      }
+    },
+    {
+      "name": "Auth - Login",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"demo@nexusmind.ai\",\n  \"password\": \"Password123!\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/login",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "auth", "login"]
+        }
+      }
+    },
+    {
+      "name": "Auth - Current Profile",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{jwtToken}}" }],
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/me",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "auth", "me"]
+        }
+      }
+    },
+    {
+      "name": "Files - List Workspace Files",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{jwtToken}}" }],
+        "url": {
+          "raw": "{{baseUrl}}/api/files",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "files"]
+        }
+      }
+    },
+    {
+      "name": "AI - Grounded Chat",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{jwtToken}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"message\": \"Explain Newton's laws using all files and provide source citations.\",\n  \"targetFileIds\": []\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/ai/chat",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "ai", "chat"]
+        }
+      }
+    },
+    {
+      "name": "AI - Connected Intelligence (Cross-Modal)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{jwtToken}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"topic\": \"Newtonian Dynamics & Mechanical Laws\",\n  \"fileIds\": []\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/ai/connected-intelligence",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "ai", "connected-intelligence"]
+        }
+      }
+    },
+    {
+      "name": "AI - Content Studio (Questions)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{jwtToken}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"type\": \"questions\",\n  \"topic\": \"Chapter 4 Dynamics\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/ai/generate-content",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "ai", "generate-content"]
+        }
+      }
+    },
+    {
+      "name": "Search - Global Multimodal Search",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{jwtToken}}" }],
+        "url": {
+          "raw": "{{baseUrl}}/api/search?q=damping",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "search"],
+          "query": [{ "key": "q", "value": "damping" }]
+        }
+      }
+    },
+    {
+      "name": "Dashboard - Stats",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{jwtToken}}" }],
+        "url": {
+          "raw": "{{baseUrl}}/api/dashboard/stats",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "dashboard", "stats"]
+        }
+      }
+    }
+  ],
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:5000" },
+    { "key": "jwtToken", "value": "" }
+  ]
+}
