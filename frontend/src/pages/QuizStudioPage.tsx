@@ -491,10 +491,10 @@ export default function QuizStudioPage() {
 
               {/* 4 Interactive Options */}
               <div className="space-y-2.5">
-                {quizQuestions[currentQIndex]?.options.map((option, optIdx) => {
+                {(quizQuestions[currentQIndex]?.options || []).map((option, optIdx) => {
                   const isAnswered = selectedAnswers[currentQIndex] !== undefined;
                   const isUserSelection = selectedAnswers[currentQIndex] === optIdx;
-                  const isCorrect = quizQuestions[currentQIndex].correctIndex === optIdx;
+                  const isCorrect = (quizQuestions[currentQIndex]?.correctIndex ?? 0) === optIdx;
 
                   let buttonStyle = 'border-slate-200 bg-slate-50 hover:border-slate-300 hover:bg-white text-slate-800';
 
@@ -788,7 +788,7 @@ export default function QuizStudioPage() {
                             Correct Answer:
                           </span>
                           <div className="p-2.5 rounded-lg bg-emerald-50/80 border border-emerald-200 text-emerald-900 font-bold">
-                            <FormattedContent content={q.options[q.correctIndex]} />
+                            <FormattedContent content={q.options ? q.options[q.correctIndex] || q.options[0] || '' : ''} />
                           </div>
                         </div>
 

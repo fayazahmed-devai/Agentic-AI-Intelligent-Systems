@@ -46,9 +46,9 @@ export default function KnowledgeGraphPage() {
   const fetchGraphData = async () => {
     setLoading(true);
     try {
-      const res = await api.get('/knowledge-graph');
-      const rawNodes: KnowledgeNode[] = res.data.nodes || [];
-      const rawEdges: KnowledgeEdge[] = res.data.edges || [];
+      const res: any = await api.get('/knowledge-graph');
+      const rawNodes: KnowledgeNode[] = res?.data?.nodes || res?.nodes || [];
+      const rawEdges: KnowledgeEdge[] = res?.data?.edges || res?.edges || [];
 
       // Calculate initial layout coordinates in circular/clustered orbits
       const width = 800;
@@ -80,11 +80,11 @@ export default function KnowledgeGraphPage() {
     setNodeExplanation(null);
     setExplaining(true);
     try {
-      const res = await api.post('/knowledge-graph/explain-node', {
+      const res: any = await api.post('/knowledge-graph/explain-node', {
         conceptLabel: node.label,
         fileIds: node.file_ids,
       });
-      setNodeExplanation(res.data.explanation);
+      setNodeExplanation(res?.data?.explanation || res?.explanation || node.description || 'No detailed explanation available.');
     } catch (err) {
       setNodeExplanation(node.description || 'No detailed explanation available.');
     } finally {

@@ -17,15 +17,22 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+let isRedirecting = false;
+
 api.interceptors.response.use(
   (response) => response.data,
   (error) => {
     if (error.response?.status === 401) {
       localStorage.removeItem('nexusmind_token');
       localStorage.removeItem('nexusmind_user');
+      window.dispatchEvent(new Event('nexusmind_unauthorized'));
       const path = window.location.pathname;
-      if (path !== '/login' && path !== '/register' && path !== '/') {
-        window.location.href = '/login';
+      if (!isRedirecting && path !== '/login' && path !== '/register' && path !== '/') {
+        isRedirecting = true;
+        setTimeout(() => {
+          isRedirecting = false;
+          window.location.href = '/login';
+        }, 150);
       }
     }
     const message = error.response?.data?.message || error.message || 'An error occurred';

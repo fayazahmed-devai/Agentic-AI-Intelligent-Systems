@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { FileProvider } from './context/FileContext';
+import ErrorBoundary from './components/ErrorBoundary';
 
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
@@ -54,7 +55,9 @@ function MainLayout({ children }: { children: React.ReactNode }) {
       <div className="flex flex-1">
         <Sidebar />
         <main className="flex-1 overflow-x-hidden min-h-[calc(100vh-4rem)]">
-          {children}
+          <ErrorBoundary>
+            {children}
+          </ErrorBoundary>
         </main>
       </div>
       <FileUploaderModal isOpen={uploaderOpen} onClose={() => setUploaderOpen(false)} />
@@ -64,10 +67,11 @@ function MainLayout({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <AuthProvider>
-        <FileProvider>
-          <Routes>
+    <ErrorBoundary fallbackTitle="Application Recovery">
+      <BrowserRouter>
+        <AuthProvider>
+          <FileProvider>
+            <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
@@ -223,5 +227,6 @@ export default function App() {
         </FileProvider>
       </AuthProvider>
     </BrowserRouter>
-  );
+  </ErrorBoundary>
+);
 }

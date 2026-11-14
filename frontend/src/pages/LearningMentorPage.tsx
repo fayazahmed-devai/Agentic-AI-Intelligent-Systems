@@ -62,11 +62,11 @@ export default function LearningMentorPage() {
     setLoading(true);
     setExplanation(null);
     try {
-      const res = await api.post('/mentor/explain', {
+      const res: any = await api.post('/mentor/explain', {
         topic: t,
         depth: selectedDepth,
       });
-      setExplanation(res.data.explanation);
+      setExplanation(res?.data?.explanation || res?.explanation || '');
       fetchProgress();
     } catch (err: any) {
       setExplanation(`Unable to synthesize explanation: ${err.message || 'Error occurred.'}`);

@@ -7,11 +7,12 @@ interface FormattedContentProps {
 }
 
 // Function to clean raw LaTeX math and format electrical & mathematical symbols into readable Unicode
-export function sanitizeMathAndLatex(raw: string): string {
-  if (!raw) return '';
+export function sanitizeMathAndLatex(raw: any): string {
+  if (raw === null || raw === undefined) return '';
+  const text = typeof raw === 'string' ? raw : String(raw);
 
   return (
-    raw
+    text
       // Remove LaTeX text wraps: \text{ A} or \text{V} -> A or V
       .replace(/\\text\s*\{\s*([^}]+)\s*\}/g, ' $1 ')
       .replace(/\\mathrm\s*\{\s*([^}]+)\s*\}/g, ' $1 ')
@@ -117,9 +118,17 @@ function renderInlineText(text: string): React.ReactNode {
 }
 
 export default function FormattedContent({ content, className = '' }: FormattedContentProps) {
-  if (!content) return null;
+  if (content === null || content === undefined) return null;
+  const contentStr =
+    typeof content === 'string'
+      ? content
+      : typeof content === 'object'
+      ? JSON.stringify(content, null, 2)
+      : String(content);
 
-  const lines = content.split('\n');
+  if (!contentStr.trim()) return null;
+
+  const lines = contentStr.split('\n');
   const elements: React.ReactNode[] = [];
 
   let inList = false;
