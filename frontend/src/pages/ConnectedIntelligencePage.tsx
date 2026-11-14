@@ -71,7 +71,7 @@ export default function ConnectedIntelligencePage() {
         <div>
           <div className="flex items-center space-x-2 text-xs font-bold text-brand-violet uppercase tracking-wider mb-1">
             <Network className="w-4 h-4" />
-            <span>Hackathon Highlight Feature</span>
+            <span>Cross-Modal Synthesis Engine</span>
           </div>
           <h1 className="text-2xl md:text-3xl font-black text-navy-900 tracking-tight">
             Connected Intelligence Studio
@@ -198,3 +198,4 @@ export default function ConnectedIntelligencePage() {
     </div>
   );
 }
+

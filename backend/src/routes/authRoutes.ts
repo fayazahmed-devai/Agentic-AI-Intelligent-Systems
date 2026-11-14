@@ -19,3 +19,4 @@ router.post('/forgot-password', validate(forgotPasswordSchema), AuthController.f
 router.post('/reset-password', validate(resetPasswordSchema), AuthController.resetPassword);
 
 export default router;
+

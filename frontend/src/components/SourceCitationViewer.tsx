@@ -82,3 +82,4 @@ export default function SourceCitationViewer({ source, onClose }: SourceCitation
     </div>
   );
 }
+

@@ -108,3 +108,4 @@ CREATE INDEX IF NOT EXISTS idx_files_user ON files(user_id);
 CREATE INDEX IF NOT EXISTS idx_extracted_file ON extracted_contents(file_id);
 CREATE INDEX IF NOT EXISTS idx_messages_conversation ON messages(conversation_id);
 CREATE INDEX IF NOT EXISTS idx_message_sources_message ON message_sources(message_id);
+

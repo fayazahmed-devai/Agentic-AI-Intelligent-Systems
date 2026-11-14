@@ -123,3 +123,4 @@ Returns live statistics: total files, processed files, storage bytes, questions 
 
 ### `GET /dashboard/activity` *(Protected)*
 Returns recent upload, question, and generation activities.
+

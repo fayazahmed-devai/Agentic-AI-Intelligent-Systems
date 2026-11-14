@@ -180,11 +180,11 @@ export default function DashboardPage() {
         </Link>
       </div>
 
-      {/* Evaluator Highlight Banner */}
+      {/* Featured Showcase Banner */}
       <div className="p-6 rounded-2xl bg-gradient-to-r from-navy-900 via-navy-800 to-brand-violet text-white shadow-md flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="space-y-1.5 max-w-2xl">
           <span className="px-2.5 py-0.5 rounded-full bg-white/10 text-white font-mono text-[10px] font-bold uppercase tracking-wider border border-white/20">
-            Hackathon Demonstration Showcase
+            Featured Multimodal Workspace
           </span>
           <h3 className="text-lg font-bold">
             Multimodal Dynamics Synthesis: 4 Modalities Connected
@@ -318,3 +318,4 @@ export default function DashboardPage() {
     </div>
   );
 }
+

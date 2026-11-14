@@ -21,3 +21,4 @@ export const config = {
   uploadDir: path.resolve(process.cwd(), 'uploads'),
   dataDir: path.resolve(process.cwd(), 'data'),
 };
+

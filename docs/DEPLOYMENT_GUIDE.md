@@ -59,3 +59,4 @@
    * `VITE_API_URL`: `https://nexusmind-backend.onrender.com/api`
 5. Click **Deploy**.
 6. Your live deployed frontend is now publicly accessible!
+

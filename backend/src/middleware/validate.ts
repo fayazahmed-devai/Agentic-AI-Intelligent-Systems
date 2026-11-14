@@ -22,3 +22,4 @@ export const validate =
       res.status(400).json({ success: false, message: 'Invalid request payload' });
     }
   };
+

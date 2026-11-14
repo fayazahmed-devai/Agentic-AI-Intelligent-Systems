@@ -11,3 +11,4 @@ router.post('/connected-intelligence', AIController.connectedIntelligence);
 router.post('/generate-content', AIController.generateContent);
 
 export default router;
+

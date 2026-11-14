@@ -1,7 +1,6 @@
 import React from 'react';
 import {
-  FileCheck2,
-  CheckCircle,
+  BookOpen,
   Layers,
   Cpu,
   Server,
@@ -9,8 +8,14 @@ import {
   Lock,
   Upload,
   Video,
-  Globe,
-  Code2,
+  FileText,
+  Image as ImageIcon,
+  Headphones,
+  Network,
+  CheckCircle2,
+  Sparkles,
+  Search,
+  ShieldCheck,
 } from 'lucide-react';
 
 export default function DocumentationPage() {
@@ -19,148 +24,228 @@ export default function DocumentationPage() {
       {/* Title */}
       <div className="space-y-3 border-b border-slate-200 pb-6">
         <div className="flex items-center space-x-2 text-brand-violet text-xs font-mono font-bold uppercase tracking-wider">
-          <FileCheck2 className="w-4 h-4" />
-          <span>NexusMind AI Hackathon Submission & Technical Documentation</span>
+          <BookOpen className="w-4 h-4" />
+          <span>NexusMind AI • Product Documentation & Architecture Guide</span>
         </div>
         <h1 className="text-3xl md:text-4xl font-black text-navy-900 tracking-tight">
-          System Architecture & Evaluation Guide
+          System Overview & User Guide
         </h1>
         <p className="text-sm text-slate-500 leading-relaxed">
-          Comprehensive review of the real-world problem statement, solution design, technical stack compliance, RAG grounding pipeline, and evaluation criteria.
+          Learn how NexusMind AI ingests, connects, indexes, and queries information across Documents, Images, Audio, and Video in one unified cognitive workspace.
         </p>
       </div>
 
-      {/* 1. Problem Statement */}
+      {/* 1. How It Works */}
       <section className="space-y-4">
         <h2 className="text-xl font-bold text-navy-900 flex items-center space-x-2">
           <span className="w-7 h-7 rounded-lg bg-navy-900 text-white flex items-center justify-center text-xs font-mono">
             1
           </span>
-          <span>Problem Statement</span>
-        </h2>
-        <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-3 text-xs md:text-sm text-slate-600 leading-relaxed">
-          <p>
-            Users across education, research, legal, and engineering fields store knowledge across multiple fragmented formats:
-          </p>
-          <ul className="list-disc list-inside space-y-1 text-slate-500 pl-2">
-            <li><strong>Text documents & PDF textbooks</strong></li>
-            <li><strong>Handwritten notes, diagrams & charts (Images)</strong></li>
-            <li><strong>Audio recordings of lectures, discussions & interviews</strong></li>
-            <li><strong>Video demonstrations, experiments & meetings</strong></li>
-          </ul>
-          <p>
-            Traditional applications process each format independently. Users must manually juggle between video players, audio spectrograms, and PDF viewers to synthesize connections. This creates knowledge fragmentation, slows decision-making, and prevents users from discovering cross-modal insights.
-          </p>
-        </div>
-      </section>
-
-      {/* 2. Solution Overview & Key Innovation */}
-      <section className="space-y-4">
-        <h2 className="text-xl font-bold text-navy-900 flex items-center space-x-2">
-          <span className="w-7 h-7 rounded-lg bg-brand-violet text-white flex items-center justify-center text-xs font-mono">
-            2
-          </span>
-          <span>Solution Overview & Connected Intelligence Innovation</span>
+          <span>Core Workflow & Connected Intelligence</span>
         </h2>
         <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-4 text-xs md:text-sm text-slate-600 leading-relaxed">
           <p>
-            <strong>NexusMind AI</strong> solves this with a unified cognitive workspace. Users upload disparate formats into a single hub. The system extracts structured chunks, image descriptions, and timestamped transcripts, and applies <strong>grounded cross-modal reasoning</strong> via Google Gemini.
+            NexusMind AI bridges fragmented knowledge across diverse media types into a single interactive environment. Instead of handling each format in silos, the system establishes cross-modal semantic connections:
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 pt-1">
-            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-1.5">
-              <span className="font-bold text-navy-900 text-xs">Grounded RAG Pipeline</span>
-              <p className="text-xs text-slate-500">
-                Guarantees zero hallucinations by restricting AI generation to retrieved workspace chunks, accompanied by exact file citations, page numbers, and timestamps.
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-3 pt-1">
+            <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-1.5">
+              <div className="flex items-center space-x-1.5 text-navy-900 font-bold text-xs">
+                <Upload className="w-4 h-4 text-brand-violet" />
+                <span>1. Ingest</span>
+              </div>
+              <p className="text-[11px] text-slate-500">
+                Upload files, record microphone audio, or capture camera snapshots directly in the browser.
               </p>
             </div>
-            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-1.5">
-              <span className="font-bold text-brand-violet text-xs">Connected Intelligence Engine</span>
-              <p className="text-xs text-slate-500">
-                Synthesizes all 4 modalities simultaneously: compares theories, identifies common concepts, detects contradictions, and compiles study materials.
+            <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-1.5">
+              <div className="flex items-center space-x-1.5 text-navy-900 font-bold text-xs">
+                <Cpu className="w-4 h-4 text-blue-600" />
+                <span>2. Process</span>
+              </div>
+              <p className="text-[11px] text-slate-500">
+                Automatic text chunking, OCR on visual diagrams, and speech transcription with timestamping.
+              </p>
+            </div>
+            <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-1.5">
+              <div className="flex items-center space-x-1.5 text-navy-900 font-bold text-xs">
+                <Network className="w-4 h-4 text-brand-teal" />
+                <span>3. Connect</span>
+              </div>
+              <p className="text-[11px] text-slate-500">
+                Multi-vector indexing discovers semantic connections across text, visuals, audio, and video.
+              </p>
+            </div>
+            <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-1.5">
+              <div className="flex items-center space-x-1.5 text-navy-900 font-bold text-xs">
+                <Sparkles className="w-4 h-4 text-emerald-600" />
+                <span>4. Query</span>
+              </div>
+              <p className="text-[11px] text-slate-500">
+                Ask natural questions and receive verified answers with page citations and audio/video timestamps.
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 3. Tech Stack Compliance Matrix */}
+      {/* 2. Supported Modalities */}
+      <section className="space-y-4">
+        <h2 className="text-xl font-bold text-navy-900 flex items-center space-x-2">
+          <span className="w-7 h-7 rounded-lg bg-brand-violet text-white flex items-center justify-center text-xs font-mono">
+            2
+          </span>
+          <span>Supported Modalities & Processing Pipelines</span>
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-2.5">
+            <div className="flex items-center space-x-2 text-blue-600 font-bold text-sm">
+              <FileText className="w-4 h-4" />
+              <span>Documents (PDF, DOCX, TXT)</span>
+            </div>
+            <p className="text-xs text-slate-600 leading-relaxed">
+              Extracts text hierarchies, sections, headings, mathematical formulas, and tabular data. Text is automatically segmented into contextual chunks with page numbers preserved for exact citation grounding.
+            </p>
+            <div className="text-[11px] font-mono text-slate-400 bg-slate-50 px-2.5 py-1 rounded-md border border-slate-100">
+              Supported extensions: .pdf, .docx, .txt
+            </div>
+          </div>
+
+          <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-2.5">
+            <div className="flex items-center space-x-2 text-emerald-600 font-bold text-sm">
+              <ImageIcon className="w-4 h-4" />
+              <span>Images & Visual Media (PNG, JPG, WEBP)</span>
+            </div>
+            <p className="text-xs text-slate-600 leading-relaxed">
+              Processes handwritten lecture notes, engineering schematics, whiteboards, flowcharts, and diagrams. Deep multimodal models extract visual descriptions and optical text into structured records.
+            </p>
+            <div className="text-[11px] font-mono text-slate-400 bg-slate-50 px-2.5 py-1 rounded-md border border-slate-100">
+              Supported extensions: .png, .jpg, .jpeg, .webp
+            </div>
+          </div>
+
+          <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-2.5">
+            <div className="flex items-center space-x-2 text-amber-600 font-bold text-sm">
+              <Headphones className="w-4 h-4" />
+              <span>Audio Recordings (MP3, WAV, M4A)</span>
+            </div>
+            <p className="text-xs text-slate-600 leading-relaxed">
+              Transcribes lectures, meetings, and voice recordings. Generates timestamped segment transcriptions that allow the AI assistant to cite the exact second in the audio stream where a fact was discussed.
+            </p>
+            <div className="text-[11px] font-mono text-slate-400 bg-slate-50 px-2.5 py-1 rounded-md border border-slate-100">
+              Supported extensions: .mp3, .wav, .m4a
+            </div>
+          </div>
+
+          <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-2.5">
+            <div className="flex items-center space-x-2 text-purple-600 font-bold text-sm">
+              <Video className="w-4 h-4" />
+              <span>Video Recordings (MP4, MOV, WEBM)</span>
+            </div>
+            <p className="text-xs text-slate-600 leading-relaxed">
+              Analyzes video demonstrations, laboratory experiments, and presentations. Synchronizes audio speech with visual scene context to answer questions across both visual events and spoken dialogue.
+            </p>
+            <div className="text-[11px] font-mono text-slate-400 bg-slate-50 px-2.5 py-1 rounded-md border border-slate-100">
+              Supported extensions: .mp4, .mov, .webm
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 3. System Architecture & Technical Specifications */}
       <section className="space-y-4">
         <h2 className="text-xl font-bold text-navy-900 flex items-center space-x-2">
           <span className="w-7 h-7 rounded-lg bg-brand-teal text-white flex items-center justify-center text-xs font-mono">
             3
           </span>
-          <span>Required Tech Stack Compliance Matrix</span>
+          <span>Technical Architecture</span>
         </h2>
         <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
           <table className="w-full text-left text-xs">
             <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase font-mono text-[10px]">
               <tr>
-                <th className="p-3.5">Layer</th>
-                <th className="p-3.5">Specified Requirement</th>
-                <th className="p-3.5">NexusMind AI Implementation</th>
-                <th className="p-3.5 text-right">Verification</th>
+                <th className="p-3.5">Subsystem</th>
+                <th className="p-3.5">Technology Stack</th>
+                <th className="p-3.5">Architecture Details</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               <tr>
-                <td className="p-3.5 font-bold text-navy-900">Frontend</td>
-                <td className="p-3.5 text-slate-600">React.js, Vite, TypeScript, React Router, Tailwind, Axios, Recharts</td>
-                <td className="p-3.5 text-slate-500 font-mono">React 18 + Vite 5 + TypeScript + Tailwind 3.4 + Axios + Recharts</td>
-                <td className="p-3.5 text-right text-emerald-600 font-bold">✅ 100% Verified</td>
+                <td className="p-3.5 font-bold text-navy-900 flex items-center space-x-1.5">
+                  <Layers className="w-3.5 h-3.5 text-brand-violet" />
+                  <span>Frontend</span>
+                </td>
+                <td className="p-3.5 text-slate-600 font-mono">React 18, Vite 5, TypeScript, Tailwind CSS</td>
+                <td className="p-3.5 text-slate-500">Single Page Application with client-side routing, responsive layouts, and interactive analytics via Recharts.</td>
               </tr>
               <tr>
-                <td className="p-3.5 font-bold text-navy-900">Backend</td>
-                <td className="p-3.5 text-slate-600">Node.js, Express.js, TypeScript, REST API</td>
-                <td className="p-3.5 text-slate-500 font-mono">Node v24 + Express 4.21 + TypeScript via tsx</td>
-                <td className="p-3.5 text-right text-emerald-600 font-bold">✅ 100% Verified</td>
+                <td className="p-3.5 font-bold text-navy-900 flex items-center space-x-1.5">
+                  <Server className="w-3.5 h-3.5 text-blue-600" />
+                  <span>Backend API</span>
+                </td>
+                <td className="p-3.5 text-slate-600 font-mono">Node.js, Express.js, TypeScript</td>
+                <td className="p-3.5 text-slate-500">Modular REST architecture, Zod schema validation, Multer streaming uploads, and centralized error handling.</td>
               </tr>
               <tr>
-                <td className="p-3.5 font-bold text-navy-900">Auth & Security</td>
-                <td className="p-3.5 text-slate-600">JWT in HttpOnly cookies, bcrypt hashing, Zod validation</td>
-                <td className="p-3.5 text-slate-500 font-mono">jsonwebtoken + bcryptjs (10 salt rounds) + Zod v3</td>
-                <td className="p-3.5 text-right text-emerald-600 font-bold">✅ 100% Verified</td>
+                <td className="p-3.5 font-bold text-navy-900 flex items-center space-x-1.5">
+                  <Lock className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>Security & Auth</span>
+                </td>
+                <td className="p-3.5 text-slate-600 font-mono">JWT, HttpOnly Cookies, bcryptjs</td>
+                <td className="p-3.5 text-slate-500">Stateless JWT session tokens stored in secure HttpOnly cookies. Passwords hashed using bcrypt with salt rounds.</td>
               </tr>
               <tr>
-                <td className="p-3.5 font-bold text-navy-900">Upload Pipeline</td>
-                <td className="p-3.5 text-slate-600">Multer file uploads, PDF/DOCX/TXT/Images/Audio/Video</td>
-                <td className="p-3.5 text-slate-500 font-mono">Multer multipart streaming + pdf-parse + mammoth</td>
-                <td className="p-3.5 text-right text-emerald-600 font-bold">✅ 100% Verified</td>
+                <td className="p-3.5 font-bold text-navy-900 flex items-center space-x-1.5">
+                  <Database className="w-3.5 h-3.5 text-amber-600" />
+                  <span>Data Layer</span>
+                </td>
+                <td className="p-3.5 text-slate-600 font-mono">PostgreSQL / Supabase + Private Storage</td>
+                <td className="p-3.5 text-slate-500">Relational schema with row ownership verification, full-text indexing, and secure file chunking storage.</td>
               </tr>
               <tr>
-                <td className="p-3.5 font-bold text-navy-900">Database & Storage</td>
-                <td className="p-3.5 text-slate-600">Supabase PostgreSQL + Storage buckets + Migrations</td>
-                <td className="p-3.5 text-slate-500 font-mono">Supabase client + SQL migration + zero-config embedded store</td>
-                <td className="p-3.5 text-right text-emerald-600 font-bold">✅ 100% Verified</td>
-              </tr>
-              <tr>
-                <td className="p-3.5 font-bold text-navy-900">Artificial Intelligence</td>
-                <td className="p-3.5 text-slate-600">Google Gemini API (Official SDK, backend-only keys)</td>
-                <td className="p-3.5 text-slate-500 font-mono">@google/generative-ai (Gemini 1.5 Flash), zero client leak</td>
-                <td className="p-3.5 text-right text-emerald-600 font-bold">✅ 100% Verified</td>
+                <td className="p-3.5 font-bold text-navy-900 flex items-center space-x-1.5">
+                  <Cpu className="w-3.5 h-3.5 text-purple-600" />
+                  <span>AI Engine</span>
+                </td>
+                <td className="p-3.5 text-slate-600 font-mono">Google Gemini Multimodal API</td>
+                <td className="p-3.5 text-slate-500">Grounded retrieval-augmented generation (RAG) pipeline with zero client-side API key exposure.</td>
               </tr>
             </tbody>
           </table>
         </div>
       </section>
 
-      {/* 4. Demo Video Recording Guide */}
+      {/* 4. Privacy, Security & Data Isolation */}
       <section className="space-y-4">
         <h2 className="text-xl font-bold text-navy-900 flex items-center space-x-2">
           <span className="w-7 h-7 rounded-lg bg-navy-900 text-white flex items-center justify-center text-xs font-mono">
             4
           </span>
-          <span>3–5 Minute Hackathon Video Script</span>
+          <span>Security & Data Privacy</span>
         </h2>
         <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-3 text-xs md:text-sm text-slate-600 leading-relaxed">
-          <ol className="list-decimal list-inside space-y-2 text-slate-600 pl-2">
-            <li><strong>0:00–0:30 (Introduction)</strong>: Introduce NexusMind AI and explain the core problem of fragmented documents, imagery, audio, and video.</li>
-            <li><strong>0:30–1:00 (Authentication & Dashboard)</strong>: Click "⚡ Auto-Fill" for the Demo Evaluator account, sign in, and walk through the live dashboard overview cards.</li>
-            <li><strong>1:00–1:45 (Multimodal Ingestion)</strong>: Open the upload modal showing file dropzone, in-browser microphone voice recorder, and live webcam snapshot.</li>
-            <li><strong>1:45–2:30 (Knowledge Library)</strong>: Show the 4 preloaded multimodal files: textbook PDF, handwritten diagram image, audio lecture, and lab experiment video.</li>
-            <li><strong>2:30–3:30 (Connected Intelligence)</strong>: Run the cross-modal synthesis on Newtonian Dynamics, highlighting the simultaneous extraction across all 4 modalities.</li>
-            <li><strong>3:30–4:15 (Grounded Citations)</strong>: Click source citations in the AI chat to demonstrate exact page references and audio timestamps.</li>
-            <li><strong>4:15–5:00 (Content Studio & Closing)</strong>: Generate practice quiz questions and summarize the real-world impact.</li>
-          </ol>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
+              <ShieldCheck className="w-4 h-4 text-emerald-600" />
+              <div className="font-bold text-navy-900 text-xs">Strict Data Isolation</div>
+              <p className="text-[11px] text-slate-500">
+                Every file, chunk, and conversation is strictly scoped to the authenticated user ID at the database query level.
+              </p>
+            </div>
+            <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
+              <Lock className="w-4 h-4 text-brand-violet" />
+              <div className="font-bold text-navy-900 text-xs">Credential Protection</div>
+              <p className="text-[11px] text-slate-500">
+                No passwords or API secrets are ever exposed in client bundles or network responses.
+              </p>
+            </div>
+            <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
+              <CheckCircle2 className="w-4 h-4 text-blue-600" />
+              <div className="font-bold text-navy-900 text-xs">Grounded Citations</div>
+              <p className="text-[11px] text-slate-500">
+                Responses are strictly grounded in user-uploaded source materials with verifiable references to eliminate hallucinations.
+              </p>
+            </div>
+          </div>
         </div>
       </section>
     </div>

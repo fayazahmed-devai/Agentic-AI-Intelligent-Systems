@@ -10,3 +10,4 @@ router.get('/stats', DashboardController.getStats);
 router.get('/activity', DashboardController.getActivity);
 
 export default router;
+

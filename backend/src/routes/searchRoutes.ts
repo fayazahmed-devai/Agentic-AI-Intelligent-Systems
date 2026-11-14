@@ -9,3 +9,4 @@ router.use(requireAuth);
 router.get('/', SearchController.search);
 
 export default router;
+

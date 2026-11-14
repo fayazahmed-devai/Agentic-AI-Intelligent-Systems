@@ -152,3 +152,4 @@ An importable Postman collection covering all endpoints is available in [docs/PO
 
 ## 📄 License
 This project is open-source and available under the [MIT License](LICENSE).
+

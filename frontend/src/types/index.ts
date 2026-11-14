@@ -95,3 +95,4 @@ export interface SearchResultItem {
   sourceLabel: string;
   score: number;
 }
+

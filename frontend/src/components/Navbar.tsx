@@ -182,3 +182,4 @@ export default function Navbar({ onOpenUpload }: { onOpenUpload?: () => void }) 
     </header>
   );
 }
+

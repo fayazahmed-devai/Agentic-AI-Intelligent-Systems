@@ -318,3 +318,4 @@ By synthesizing all four modalities, students and researchers can grasp both the
 - [x] Verify schematic orientation against laboratory diagram`;
   },
 };
+

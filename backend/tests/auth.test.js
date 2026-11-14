@@ -41,3 +41,4 @@ test('Database: User Persistence', async () => {
   const fetched = await db.users.findById(created.id);
   assert.strictEqual(fetched?.email, created.email);
 });
+

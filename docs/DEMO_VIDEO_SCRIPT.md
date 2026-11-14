@@ -92,3 +92,4 @@
   > "Built with React, Vite, TypeScript, Express, JWT, Zod, Multer, Supabase, and Google Gemini—NexusMind AI turns fragmented media into connected intelligence.
   > 
   > Thank you for evaluating NexusMind AI!"
+

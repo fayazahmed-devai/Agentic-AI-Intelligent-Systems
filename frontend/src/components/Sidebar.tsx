@@ -110,16 +110,17 @@ export default function Sidebar() {
         </div>
       </div>
 
-      {/* Evaluator Guide Box */}
+      {/* Grounded Intelligence Box */}
       <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-1.5">
         <div className="flex items-center space-x-2 text-xs font-bold text-navy-900">
           <ShieldCheck className="w-4 h-4 text-emerald-600" />
-          <span>Evaluation Grade</span>
+          <span>Grounded Intelligence</span>
         </div>
         <p className="text-[11px] text-slate-500 leading-relaxed">
-          100% Grounded RAG with exact source citations across documents, images, audio & video.
+          Grounded cross-modal reasoning with exact source citations across documents, images, audio & video.
         </p>
       </div>
     </aside>
   );
 }
+

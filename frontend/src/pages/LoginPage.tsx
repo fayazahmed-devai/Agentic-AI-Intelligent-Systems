@@ -54,7 +54,7 @@ export default function LoginPage() {
             <Zap className="w-4 h-4 text-brand-violet flex-shrink-0" />
             <div className="text-left">
               <span className="text-[11px] font-bold text-navy-900 block">
-                Evaluator Demo Account Ready
+                Quick Demo Account
               </span>
               <span className="text-[10px] text-slate-600 font-mono">
                 demo@nexusmind.ai / Password123!
@@ -158,3 +158,4 @@ export default function LoginPage() {
     </div>
   );
 }
+

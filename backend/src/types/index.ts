@@ -89,3 +89,4 @@ export interface DashboardStats {
   questionsAsked: number;
   modalityCounts: Record<FileModality, number>;
 }
+

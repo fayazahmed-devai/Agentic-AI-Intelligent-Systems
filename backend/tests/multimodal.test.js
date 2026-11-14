@@ -39,3 +39,4 @@ test('Connected Intelligence Engine: Grounded Response Structure', async () => {
   assert.ok(result.content.includes('## 7. Differences or Contradictions Detected'));
   assert.ok(Array.isArray(result.sources));
 });
+

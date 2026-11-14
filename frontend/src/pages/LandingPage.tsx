@@ -84,7 +84,7 @@ export default function LandingPage() {
               to="/docs"
               className="px-5 py-3 rounded-xl text-slate-600 hover:text-navy-900 text-sm font-semibold transition"
             >
-              Evaluation Docs
+              Documentation
             </Link>
           </div>
         </div>
@@ -206,3 +206,4 @@ export default function LandingPage() {
     </div>
   );
 }
+
