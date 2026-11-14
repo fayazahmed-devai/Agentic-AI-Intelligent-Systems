@@ -107,6 +107,13 @@ export interface Investigation {
     text: string;
   }[];
   created_at: string;
+  status?: string;
+  modalities_searched?: string[];
+  concepts_detected?: string[];
+  cross_modal_connections?: string[];
+  findings?: any[];
+  contradictions_or_discrepancies?: string[];
+  final_synthesis?: string;
 }
 
 export interface KnowledgeNode {
@@ -173,6 +180,7 @@ export interface UserPreferences {
   speech_rate: number;
   auto_speak: boolean;
   study_goal: string;
+  favorite_file_ids?: string[];
   created_at: string;
   updated_at: string;
 }

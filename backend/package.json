@@ -7,7 +7,9 @@
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "build": "tsc",
+    "prestart": "tsc",
     "start": "node dist/server.js",
+    "start:tsx": "tsx src/server.ts",
     "test": "node --test tests/*.test.js"
   },
   "dependencies": {
@@ -24,6 +26,8 @@
     "multer": "^1.4.5-lts.1",
     "pdf-parse": "^1.1.1",
     "pg": "^8.13.1",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3",
     "uuid": "^11.0.5",
     "zod": "^3.24.1"
   },
@@ -38,8 +42,6 @@
     "@types/node": "^22.10.7",
     "@types/pdf-parse": "^1.1.4",
     "@types/pg": "^8.11.11",
-    "@types/uuid": "^10.0.0",
-    "tsx": "^4.19.2",
-    "typescript": "^5.7.3"
+    "@types/uuid": "^10.0.0"
   }
 }

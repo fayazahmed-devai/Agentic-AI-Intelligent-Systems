@@ -78,6 +78,7 @@ CREATE TABLE IF NOT EXISTS user_preferences (
   speech_rate NUMERIC(3,2) DEFAULT 1.0,
   auto_speak BOOLEAN DEFAULT false,
   study_goal VARCHAR(255) DEFAULT 'Master uploaded concepts',
+  favorite_file_ids JSONB DEFAULT '[]'::jsonb,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
