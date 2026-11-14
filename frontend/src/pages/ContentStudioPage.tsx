@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import api from '../services/api';
 import { useFiles } from '../context/FileContext';
+import FormattedContent from '../components/FormattedContent';
 import {
   Sparkles,
   BookOpen,
@@ -19,7 +20,7 @@ export default function ContentStudioPage() {
   const [selectedType, setSelectedType] = useState<
     'summary' | 'study_notes' | 'questions' | 'action_items' | 'comparison'
   >('questions');
-  const [topic, setTopic] = useState('Newtonian Dynamics & Mechanical Laws');
+  const [topic, setTopic] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedText, setGeneratedText] = useState<string>('');
   const [copied, setCopied] = useState(false);
@@ -60,9 +61,15 @@ export default function ContentStudioPage() {
   const handleGenerate = async () => {
     try {
       setIsGenerating(true);
+      const effectiveTopic =
+        topic.trim() ||
+        (files.length > 0
+          ? files.map((f) => f.original_name.replace(/\.[^/.]+$/, '')).join(', ')
+          : 'Workspace Materials');
+
       const res: any = await api.post('/ai/generate-content', {
         type: selectedType,
-        topic: topic.trim(),
+        topic: effectiveTopic,
         fileIds: files.map((f) => f.id),
       });
 
@@ -187,8 +194,8 @@ export default function ContentStudioPage() {
             </span>
           </div>
 
-          <div className="prose max-w-none text-xs md:text-sm text-slate-800 leading-relaxed font-sans whitespace-pre-wrap space-y-4">
-            {generatedText}
+          <div className="pt-2">
+            <FormattedContent content={generatedText} />
           </div>
         </div>
       )}

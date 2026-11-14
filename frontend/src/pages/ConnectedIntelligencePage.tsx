@@ -18,6 +18,7 @@ import {
   Zap,
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import FormattedContent from '../components/FormattedContent';
 
 export default function ConnectedIntelligencePage() {
   const { files } = useFiles();
@@ -256,8 +257,8 @@ export default function ConnectedIntelligencePage() {
             </span>
           </div>
 
-          <div className="prose max-w-none text-xs md:text-sm text-slate-800 leading-relaxed font-sans whitespace-pre-wrap space-y-4">
-            {result.content}
+          <div className="pt-2">
+            <FormattedContent content={result.content} />
           </div>
         </div>
       )}

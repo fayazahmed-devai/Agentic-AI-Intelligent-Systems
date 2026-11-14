@@ -13,6 +13,46 @@ function getGenAIClient(): GoogleGenerativeAI | null {
   }
 }
 
+// Function to clean raw LaTeX math and format into readable Unicode plain text
+export function cleanLatexAndFormatting(raw: string): string {
+  if (!raw) return '';
+  return raw
+    .replace(/\\text\s*\{\s*([^}]+)\s*\}/g, ' $1 ')
+    .replace(/\\mathrm\s*\{\s*([^}]+)\s*\}/g, ' $1 ')
+    .replace(/\\Omega/g, 'Ω')
+    .replace(/\\ohm/gi, 'Ω')
+    .replace(/\\mu/g, 'μ')
+    .replace(/\\micro/g, 'μ')
+    .replace(/\\Delta/g, 'Δ')
+    .replace(/\\approx/g, '≈')
+    .replace(/\\times/g, '×')
+    .replace(/\\cdot/g, '·')
+    .replace(/\\pm/g, '±')
+    .replace(/\\le/g, '≤')
+    .replace(/\\ge/g, '≥')
+    .replace(/\\ne/g, '≠')
+    .replace(/\\alpha/g, 'α')
+    .replace(/\\beta/g, 'β')
+    .replace(/\\theta/g, 'θ')
+    .replace(/\\pi/g, 'π')
+    .replace(/\\frac\s*\{([^}]+)\}\s*\{([^}]+)\}/g, '($1 / $2)')
+    .replace(/\\sqrt\s*\{([^}]+)\}/g, '√($1)')
+    .replace(/_\{(\d+)\}/g, (_, d) =>
+      d
+        .split('')
+        .map((c: string) => '₀₁₂₃₄₅₆₇₈₉'[parseInt(c, 10)] || c)
+        .join('')
+    )
+    .replace(/_(\d)(?!\d)/g, (_, d) => '₀₁₂₃₄₅₆₇₈₉'[parseInt(d, 10)] || d)
+    .replace(/_\{([^}]+)\}/g, '_$1')
+    .replace(/\^2/g, '²')
+    .replace(/\^3/g, '³')
+    .replace(/\\[ ,;]/g, ' ')
+    .replace(/\$+/g, '')
+    .replace(/[ \t]{2,}/g, ' ')
+    .trim();
+}
+
 // Helper to call Gemini with automatic model fallback
 async function callGemini(prompt: string, maxTokens = 3000): Promise<string | null> {
   const client = getGenAIClient();
@@ -35,7 +75,7 @@ async function callGemini(prompt: string, maxTokens = 3000): Promise<string | nu
       const result = await model.generateContent(prompt);
       const text = result.response.text();
       if (text && text.trim().length > 0) {
-        return text;
+        return cleanLatexAndFormatting(text);
       }
     } catch (err: any) {
       console.warn(`Model ${modelName} call notice:`, err.message);
@@ -73,12 +113,14 @@ export const GeminiService = {
     const systemPrompt = `You are NexusMind AI, a grounded Multimodal Knowledge Assistant.
 Answer the user's question STRICTLY based on the provided evidence retrieved from their personal workspace.
 
-GROUNDING RULES:
+GROUNDING & FORMATTING RULES:
 1. Use only the provided workspace evidence to answer questions about the user's files.
-2. If the answer cannot be determined from the evidence, state clearly what is missing.
-3. Every factual claim must be backed by citations in the format: "[Source #X: File Name — Page/Timestamp]".
-4. Point out any connections, formulas, answers, or details present in the sources.
-5. Format your output in clean GitHub-Flavored Markdown with headings, bullet points, and code blocks.`;
+2. Every factual claim must be backed by citations in the format: "[Source #X: File Name — Page/Timestamp]".
+3. Output MUST be in clean, highly readable format.
+4. DO NOT use raw LaTeX math commands like \\text{}, \\Omega, \\approx, \\frac{}, etc.
+5. DO NOT wrap formulas in raw dollar signs ($ or $$).
+6. Use clean Unicode symbols directly: Ω for ohms, A for amperes, V for volts, W for watts, ≈ for approximately, I₁, I₂, V_BD, etc.
+7. Format with clear markdown headings, bold terms, and bullet points.`;
 
     const prompt = `${systemPrompt}\n\nRETRIEVED WORKSPACE EVIDENCE:\n${contextSnippets}\n\nUSER QUESTION: ${question}`;
     const liveResponse = await callGemini(prompt, 2500);
@@ -98,7 +140,7 @@ GROUNDING RULES:
     }
 
     // Dynamic resilient grounded answer generator based on actual retrieved sources
-    const answer = `### 🧠 Grounded Workspace Synthesis
+    const answer = cleanLatexAndFormatting(`### 🧠 Grounded Workspace Synthesis
 
 Based on **${sources.length} retrieved source chunk(s)** in your workspace for **"${question}"**:
 
@@ -123,11 +165,10 @@ ${sources
 ---
 
 #### 🔍 Analysis & Grounded Findings
-Your uploaded materials directly address this inquiry. Key items and topics extracted from your documents:
 ${sources
   .slice(0, 3)
   .map((s) => `* **${s.file.original_name}**: ${s.content.extracted_text.slice(0, 180).replace(/\n+/g, ' ')}...`)
-  .join('\n')}`;
+  .join('\n')}`);
 
     return {
       answer,
@@ -160,6 +201,22 @@ ${sources
 Analyze the user's uploaded multimodal files regarding: "${topic}".
 Synthesize the actual evidence from all provided documents, images, audio recordings, and videos.
 
+READABILITY & FORMATTING MANDATE:
+- All output MUST be in 100% human-readable text.
+- NEVER output raw LaTeX syntax like \\text{}, \\Omega, \\approx, \\frac{}, \\cdot, etc.
+- NEVER wrap formulas in dollar signs ($ or $$).
+- Use standard, clean readable symbols directly:
+  * Use "Ω" for ohms (e.g. 15 Ω, 2 Ω, 5 Ω)
+  * Use "A" for amperes (e.g. 8 A, 1.5 A)
+  * Use "V" for volts (e.g. 10 V, 48 V)
+  * Use "W" for watts (e.g. 384 W)
+  * Use "≈" for approximately (e.g. ≈ 10.9 mA)
+  * Use clean readable subscripts: I₁, I₂, I₃, V_BD, R_BD
+- Structure questions as:
+  * Q1: ...
+  * Q2: ...
+  with clear explanations.
+
 Structure your response EXACTLY with these markdown sections:
 ## 1. Overall Synthesis
 ## 2. Evidence from Documents & Text
@@ -169,7 +226,7 @@ Structure your response EXACTLY with these markdown sections:
 ## 6. Core Concepts & Formulations
 ## 7. Comparative Analysis & Key Observations
 ## 8. Summary & Revision Highlights
-## 9. Practice Questions & Solutions (5 detailed questions with answers based on the materials)
+## 9. Practice Questions & Solutions (Detailed questions with clean, readable answers based on the materials)
 
 RETRIEVED WORKSPACE EVIDENCE:
 ${sources
@@ -198,7 +255,7 @@ ${sources
 
     const fileNamesList = files.map((f) => `\`${f.original_name}\``).join(', ');
 
-    const content = `## 1. Overall Synthesis
+    const rawContent = `## 1. Overall Synthesis
 This comprehensive cross-modal synthesis integrates evidence across **${files.length} uploaded files** (${fileNamesList}) regarding **"${topic}"**. NexusMind AI extracted and correlated factual statements, formulas, and operational notes from your materials into a unified knowledge model.
 
 ## 2. Evidence from Documents & Text
@@ -232,7 +289,7 @@ By synthesizing your materials (${fileNamesList}), learners and researchers gain
    * *Answer*: The documents provide structured questions and theory, while supplementary notes clarify step-by-step problem-solving.`;
 
     return {
-      content,
+      content: cleanLatexAndFormatting(rawContent),
       sources: sources.map((s) => ({
         fileId: s.file.id,
         fileName: s.file.original_name,
@@ -268,7 +325,7 @@ By synthesizing your materials (${fileNamesList}), learners and researchers gain
       instruction = `Compare the provided sources: Similarities, Differences, and Cross-modal insights based strictly on the materials.`;
     }
 
-    const prompt = `You are the Content Studio in NexusMind AI. Topic: "${topic}".\n${instruction}\n\nEvidence:\n${evidenceText}`;
+    const prompt = `You are the Content Studio in NexusMind AI. Topic: "${topic}".\n${instruction}\n\nREADABILITY: Do not use raw LaTeX commands or dollar signs. Use clean Unicode characters (Ω, A, V, W, ≈, etc.).\n\nEvidence:\n${evidenceText}`;
     const liveResult = await callGemini(prompt, 3000);
 
     if (liveResult) {
@@ -276,7 +333,7 @@ By synthesizing your materials (${fileNamesList}), learners and researchers gain
     }
 
     // Dynamic resilient content based on actual sources
-    return `### 📚 Content Studio: ${topic} (${type.toUpperCase()})
+    const rawContent = `### 📚 Content Studio: ${topic} (${type.toUpperCase()})
 
 #### 1. Overview of Retrieved Content
 Based on **${sources.length} evidence sources** from: ${sources.map((s) => s.file.original_name).join(', ')}
@@ -290,5 +347,7 @@ ${sources.slice(0, 5).map((s) => `* **${s.sourceLabel}**:\n  > "${s.content.extr
   - [x] Review key problems and definitions in ${sources[0]?.file.original_name || 'uploaded files'}
   - [x] Check formulas and step-by-step calculations
   - [x] Validate cross-references across sources`;
+
+    return cleanLatexAndFormatting(rawContent);
   },
 };

@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { Conversation, Message, MessageSource } from '../types';
 import SourceCitationViewer from '../components/SourceCitationViewer';
+import FormattedContent from '../components/FormattedContent';
 
 export default function ChatPage() {
   const [searchParams] = useSearchParams();
@@ -245,8 +246,12 @@ export default function ChatPage() {
                     </div>
 
                     {/* Content */}
-                    <div className="whitespace-pre-wrap font-sans leading-relaxed">
-                      {msg.content}
+                    <div className="font-sans leading-relaxed">
+                      {isUser ? (
+                        <div className="whitespace-pre-wrap">{msg.content}</div>
+                      ) : (
+                        <FormattedContent content={msg.content} />
+                      )}
                     </div>
 
                     {/* Citations Badges (Section 9) */}
