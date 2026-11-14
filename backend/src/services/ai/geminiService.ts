@@ -375,38 +375,43 @@ ${sources.slice(0, 5).map((s) => `* **${s.sourceLabel}**:\n  > "${s.content.extr
     difficulty?: string;
   }) {
     const evidenceText = sources
-      .map((s) => `[${s.sourceLabel}]: ${s.content.extracted_text}`)
-      .join('\n\n');
+      .map((s) => `[${s.sourceLabel}]:\n${s.content.extracted_text}`)
+      .join('\n\n---\n\n');
+
+    if (!evidenceText || evidenceText.trim().length === 0) {
+      throw new Error('No extracted text available from workspace materials to generate questions.');
+    }
 
     const prompt = `You are an expert pedagogical AI in NexusMind AI.
-Generate an interactive, high-quality multiple choice quiz based strictly on the provided workspace materials.
+Generate an interactive, high-quality multiple choice quiz assessing the subject matter, procedures, concepts, and details contained in the provided workspace materials.
 
 TOPIC / FOCUS: "${topic}"
 QUESTION COUNT: ${count}
 DIFFICULTY: ${difficulty}
 
 RULES:
-1. Every question must be grounded in the provided evidence.
-2. Provide exactly 4 options per question.
-3. "correctIndex" must be the 0-based index (0, 1, 2, or 3) of the correct option.
-4. "explanation" must explain why that option is correct, referencing evidence.
-5. "sourceLabel" must cite the file name and page.
-6. Clean readable Unicode characters (Ω, A, V, W, ≈, etc.). DO NOT output raw LaTeX commands like \\text{} or dollar signs ($).
+1. Every question must directly test specific concepts, facts, commands, or details found in the EVIDENCE below.
+2. DO NOT create meta-questions asking about whether evidence was supplied or about the quiz generation process itself.
+3. Provide exactly 4 options per question.
+4. "correctIndex" must be the 0-based index (0, 1, 2, or 3) of the correct option.
+5. "explanation" must explain why that option is correct, referencing facts from the evidence.
+6. "sourceLabel" must cite the source file name and section.
+7. Clean readable Unicode characters (Ω, A, V, W, ≈, etc.). DO NOT output raw LaTeX commands like \\text{} or dollar signs ($).
 
 CRITICAL: Return ONLY valid JSON array with no extra markdown formatting (or inside json codeblock):
 [
   {
     "id": "q1",
-    "question": "What is the primary condition required for Superposition Theorem to hold?",
+    "question": "Which command initializes a local Git repository according to the developer notes?",
     "options": [
-      "The network must be non-linear",
-      "The network must be linear and bilateral",
-      "All independent sources must be active simultaneously",
-      "Power must be linearly additive"
+      "git init",
+      "git start",
+      "npm install",
+      "git push origin main"
     ],
-    "correctIndex": 1,
-    "explanation": "Superposition theorem applies only to linear bilateral networks where voltage and current responses are directly proportional.",
-    "sourceLabel": "Document — Page 1",
+    "correctIndex": 0,
+    "explanation": "The developer notes explicitly list 'git init' as the command for pushing and initializing the project repository.",
+    "sourceLabel": "${sources[0]?.sourceLabel || 'Uploaded Notes'}",
     "difficulty": "medium"
   }
 ]

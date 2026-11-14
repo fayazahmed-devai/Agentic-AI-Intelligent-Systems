@@ -15,43 +15,72 @@ export const RetrievalService = {
     targetFileIds: string[] = [],
     limit = 6
   ): Promise<RankedSource[]> {
-    let userFiles = await db.files.find({ user_id: userId, processing_status: 'Processed' });
-    if (userFiles.length === 0) {
-      userFiles = await db.files.find({ user_id: '00000000-0000-4000-a000-000000000001', processing_status: 'Processed' });
-      if (userFiles.length === 0) {
-        userFiles = await db.files.find({ user_id: 'usr_demo_evaluator', processing_status: 'Processed' });
-      }
-    }
-    if (userFiles.length === 0) return [];
+    // 1. Gather all accessible files for this user: user-uploaded + workspace demo/shared files
+    const userFiles = await db.files.find({ user_id: userId, processing_status: 'Processed' });
+    const demoFiles = await db.files.find({ user_id: 'usr_demo_evaluator', processing_status: 'Processed' });
+    const sharedFiles1 = await db.files.find({ user_id: '00000000-0000-4000-a000-000000000001', processing_status: 'Processed' });
 
-    const fileMap = new Map<string, FileRecord>();
-    userFiles.forEach((f) => fileMap.set(f.id, f));
+    const allFilesMap = new Map<string, FileRecord>();
+    userFiles.forEach((f) => allFilesMap.set(f.id, f));
+    demoFiles.forEach((f) => {
+      if (!allFilesMap.has(f.id)) allFilesMap.set(f.id, f);
+    });
+    sharedFiles1.forEach((f) => {
+      if (!allFilesMap.has(f.id)) allFilesMap.set(f.id, f);
+    });
 
-    // Get all extracted contents for user
-    let allContents = await db.extractedContents.find({ user_id: userId });
-    if (allContents.length === 0) {
-      allContents = await db.extractedContents.find({ user_id: '00000000-0000-4000-a000-000000000001' });
-      if (allContents.length === 0) {
-        allContents = await db.extractedContents.find({ user_id: 'usr_demo_evaluator' });
-      }
-    }
-
-    // Filter by specific file IDs if supplied
+    // Also if targetFileIds contains files not in the map, load them directly by id
     if (targetFileIds.length > 0) {
-      allContents = allContents.filter((c) => targetFileIds.includes(c.file_id));
+      for (const fId of targetFileIds) {
+        if (!allFilesMap.has(fId)) {
+          const directFile = await db.files.findById(fId);
+          if (directFile) {
+            allFilesMap.set(directFile.id, directFile);
+          }
+        }
+      }
+    }
+
+    if (allFilesMap.size === 0) return [];
+
+    // 2. Determine target files
+    let targetFiles: FileRecord[] = [];
+    if (targetFileIds.length > 0) {
+      targetFiles = targetFileIds
+        .map((id) => allFilesMap.get(id))
+        .filter((f): f is FileRecord => f !== undefined);
+    }
+    if (targetFiles.length === 0) {
+      // If user has uploaded files, prioritize them; else use all accessible files
+      targetFiles = userFiles.length > 0 ? userFiles : Array.from(allFilesMap.values());
+    }
+
+    // 3. Gather extracted contents for all target files
+    const allContents: ExtractedContent[] = [];
+    for (const file of targetFiles) {
+      const contents = await db.extractedContents.find({ file_id: file.id });
+      allContents.push(...contents);
+    }
+
+    // Fallback: if no contents found for targetFiles, get all contents from accessible files
+    if (allContents.length === 0) {
+      for (const file of allFilesMap.values()) {
+        const contents = await db.extractedContents.find({ file_id: file.id });
+        allContents.push(...contents);
+      }
     }
 
     if (allContents.length === 0) return [];
 
-    // Query terms for keyword matching & relevance scoring
-    const terms = query
+    // 4. Query terms for keyword matching & relevance scoring
+    const terms = (query || '')
       .toLowerCase()
       .replace(/[^\w\s]/g, '')
       .split(/\s+/)
       .filter((w) => w.length >= 3);
 
     const scored = allContents.map((content) => {
-      const file = fileMap.get(content.file_id);
+      const file = allFilesMap.get(content.file_id);
       const textLower = (content.extracted_text || '').toLowerCase();
 
       let matchCount = 0;
@@ -61,12 +90,11 @@ export const RetrievalService = {
         }
       }
 
-      // Relevance score calculation: higher when more search terms match
-      let score = 0;
-      if (terms.length > 0) {
-        score = matchCount > 0 ? 0.5 + 0.5 * (matchCount / terms.length) : 0;
-      } else {
-        score = 0.7;
+      // If specific target files were selected, give them a high baseline score (0.75+)
+      // so their content is NEVER filtered out even if filename has no keyword overlap with content
+      let score = targetFileIds.length > 0 ? 0.8 : 0.6;
+      if (terms.length > 0 && matchCount > 0) {
+        score = Math.min(1.0, 0.7 + 0.3 * (matchCount / terms.length));
       }
 
       let sourceLabel = '';
@@ -82,31 +110,29 @@ export const RetrievalService = {
         } else {
           sourceLabel = `${file.original_name} — Extracted section`;
         }
+      } else {
+        sourceLabel = `Uploaded Material — Section`;
       }
 
       return {
-        file: file!,
+        file: file || ({ id: content.file_id, original_name: 'Uploaded Material', modality: 'document' } as FileRecord),
         content,
         sourceLabel,
         relevanceScore: parseFloat(score.toFixed(2)),
       };
     });
 
-    // Filter to valid files and prioritize items that matched search terms
-    let filtered = scored.filter((item) => item.file !== undefined && item.relevanceScore > 0);
-    if (filtered.length === 0) {
-      filtered = scored.filter((item) => item.file !== undefined);
-    }
-    filtered.sort((a, b) => b.relevanceScore - a.relevanceScore);
+    // Sort by relevance score descending
+    scored.sort((a, b) => b.relevanceScore - a.relevanceScore);
 
-    // If multiple target files are specified, ensure balanced representation across all selected files
+    // If multiple target files specified, ensure balanced representation
     if (targetFileIds.length > 1) {
-      const perFileTarget = Math.max(2, Math.floor(limit / targetFileIds.length));
+      const perFileTarget = Math.max(1, Math.floor(limit / targetFileIds.length));
       const balanced: RankedSource[] = [];
       const seenIds = new Set<string>();
 
       for (const fId of targetFileIds) {
-        const fileChunks = filtered.filter((s) => s.file.id === fId);
+        const fileChunks = scored.filter((s) => s.file.id === fId);
         for (const item of fileChunks.slice(0, perFileTarget)) {
           if (!seenIds.has(item.content.id)) {
             seenIds.add(item.content.id);
@@ -115,17 +141,17 @@ export const RetrievalService = {
         }
       }
 
-      for (const item of filtered) {
+      for (const item of scored) {
         if (!seenIds.has(item.content.id) && balanced.length < limit) {
           seenIds.add(item.content.id);
           balanced.push(item);
         }
       }
 
-      return balanced;
+      return balanced.length > 0 ? balanced : scored.slice(0, limit);
     }
 
-    return filtered.slice(0, limit);
+    return scored.slice(0, limit);
   },
 
   async globalSearch(userId: string, query: string, limit = 20) {

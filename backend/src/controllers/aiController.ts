@@ -266,7 +266,11 @@ export const AIController = {
 
       let cleanTopic = topic.trim();
       if (!cleanTopic) {
-        cleanTopic = targetFiles.map((f) => f.original_name.replace(/\.[^/.]+$/, '')).join(' & ') + ' Quiz';
+        const readableFileNames = targetFiles.map((f) => f.original_name.replace(/\.[^/.]+$/, ''));
+        const isGenericCamera = readableFileNames.every((n) => /^IMG[-_]/i.test(n));
+        cleanTopic = isGenericCamera
+          ? 'Uploaded Notes & Materials Review Quiz'
+          : readableFileNames.join(' & ') + ' Quiz';
       }
 
       const sources = await RetrievalService.searchRelevantEvidence(
@@ -275,6 +279,14 @@ export const AIController = {
         targetFiles.map((f) => f.id),
         12
       );
+
+      if (sources.length === 0) {
+        res.status(400).json({
+          success: false,
+          message: 'No readable text or content found in the selected files to generate a quiz.',
+        });
+        return;
+      }
 
       const questions = await GeminiService.generateQuizQuestions({
         topic: cleanTopic,
@@ -315,7 +327,11 @@ export const AIController = {
 
       let cleanTopic = topic.trim();
       if (!cleanTopic) {
-        cleanTopic = targetFiles.map((f) => f.original_name.replace(/\.[^/.]+$/, '')).join(' & ') + ' Flashcards';
+        const readableFileNames = targetFiles.map((f) => f.original_name.replace(/\.[^/.]+$/, ''));
+        const isGenericCamera = readableFileNames.every((n) => /^IMG[-_]/i.test(n));
+        cleanTopic = isGenericCamera
+          ? 'Uploaded Notes & Materials Review Flashcards'
+          : readableFileNames.join(' & ') + ' Flashcards';
       }
 
       const sources = await RetrievalService.searchRelevantEvidence(
@@ -324,6 +340,14 @@ export const AIController = {
         targetFiles.map((f) => f.id),
         12
       );
+
+      if (sources.length === 0) {
+        res.status(400).json({
+          success: false,
+          message: 'No readable text or content found to generate flashcards.',
+        });
+        return;
+      }
 
       const flashcards = await GeminiService.generateFlashcards({
         topic: cleanTopic,
