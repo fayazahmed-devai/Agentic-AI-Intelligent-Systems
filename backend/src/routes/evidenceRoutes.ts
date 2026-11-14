@@ -9,3 +9,4 @@ router.post('/verify', EvidenceController.verifyClaim);
 router.get('/summary', EvidenceController.getTrustSummary);
 
 export default router;
+

@@ -1,11 +1,23 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Layers, Mail, Lock, ArrowRight, Zap, AlertCircle } from 'lucide-react';
+import {
+  Layers,
+  Mail,
+  Lock,
+  ArrowRight,
+  Zap,
+  AlertCircle,
+  Eye,
+  EyeOff,
+  UserPlus,
+  CheckCircle2,
+} from 'lucide-react';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [forgotModalOpen, setForgotModalOpen] = useState(false);
@@ -18,7 +30,7 @@ export default function LoginPage() {
     try {
       setIsSubmitting(true);
       setErrorMsg('');
-      await login(email, password);
+      await login(email.trim(), password.trim());
       navigate('/dashboard');
     } catch (err: any) {
       setErrorMsg(err.message || 'Login failed. Please check your credentials.');
@@ -27,9 +39,25 @@ export default function LoginPage() {
     }
   };
 
+  const handleInstantDemoLogin = async () => {
+    try {
+      setIsSubmitting(true);
+      setErrorMsg('');
+      setEmail('demo@nexusmind.ai');
+      setPassword('Password123!');
+      await login('demo@nexusmind.ai', 'Password123!');
+      navigate('/dashboard');
+    } catch (err: any) {
+      setErrorMsg(err.message || 'Demo login failed');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const handleFillDemo = () => {
     setEmail('demo@nexusmind.ai');
     setPassword('Password123!');
+    setErrorMsg('');
   };
 
   return (
@@ -48,34 +76,68 @@ export default function LoginPage() {
           </p>
         </div>
 
-        {/* Demo Quick-Fill Pill */}
-        <div className="p-3.5 rounded-xl bg-brand-violet/10 border border-brand-violet/20 flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <Zap className="w-4 h-4 text-brand-violet flex-shrink-0" />
-            <div className="text-left">
-              <span className="text-[11px] font-bold text-navy-900 block">
-                Quick Demo Account
-              </span>
-              <span className="text-[10px] text-slate-600 font-mono">
-                demo@nexusmind.ai / Password123!
-              </span>
+        {/* Demo Quick-Fill & Instant Sign In Pill */}
+        <div className="p-4 rounded-2xl bg-violet-50 border border-violet-200 shadow-sm space-y-2.5">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <Zap className="w-4 h-4 text-brand-violet flex-shrink-0 animate-pulse" />
+              <div>
+                <span className="text-xs font-bold text-navy-900 block">
+                  Demo Evaluator Account
+                </span>
+                <span className="text-[11px] text-slate-600 font-mono">
+                  demo@nexusmind.ai / Password123!
+                </span>
+              </div>
             </div>
           </div>
-          <button
-            type="button"
-            onClick={handleFillDemo}
-            className="px-3 py-1 rounded-lg bg-navy-900 hover:bg-navy-800 text-white text-[11px] font-semibold transition shadow-sm"
-          >
-            Auto-Fill
-          </button>
+
+          <div className="flex items-center gap-2 pt-1 border-t border-violet-100">
+            <button
+              type="button"
+              onClick={handleInstantDemoLogin}
+              disabled={isSubmitting}
+              className="flex-1 py-2 px-3 rounded-xl bg-gradient-to-r from-navy-900 to-brand-violet hover:opacity-95 text-white text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-sm disabled:opacity-50"
+            >
+              <Zap className="w-3.5 h-3.5" />
+              <span>1-Click Instant Sign In</span>
+            </button>
+            <button
+              type="button"
+              onClick={handleFillDemo}
+              className="py-2 px-3 rounded-xl border border-violet-300 bg-white hover:bg-violet-50 text-slate-700 text-xs font-semibold transition"
+            >
+              Fill Inputs
+            </button>
+          </div>
         </div>
 
         {/* Form Card */}
         <div className="p-8 rounded-2xl bg-white border border-slate-200 shadow-xl space-y-5">
           {errorMsg && (
-            <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center space-x-2">
-              <AlertCircle className="w-4 h-4 flex-shrink-0" />
-              <span>{errorMsg}</span>
+            <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs space-y-2">
+              <div className="flex items-start space-x-2">
+                <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                <span className="leading-relaxed">{errorMsg}</span>
+              </div>
+              <div className="flex items-center gap-2 pt-1 border-t border-rose-100">
+                <button
+                  type="button"
+                  onClick={handleInstantDemoLogin}
+                  className="text-[11px] font-bold text-brand-violet hover:underline flex items-center gap-1"
+                >
+                  <Zap className="w-3 h-3" />
+                  Sign In as Demo Evaluator
+                </button>
+                <span className="text-slate-300">•</span>
+                <Link
+                  to="/register"
+                  className="text-[11px] font-bold text-navy-900 hover:underline flex items-center gap-1"
+                >
+                  <UserPlus className="w-3 h-3" />
+                  Create New Account
+                </Link>
+              </div>
             </div>
           )}
 
@@ -89,7 +151,7 @@ export default function LoginPage() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="investigator@domain.com"
+                  placeholder="demo@nexusmind.ai"
                   className="w-full pl-10 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-navy-900 focus:bg-white transition"
                 />
               </div>
@@ -109,13 +171,21 @@ export default function LoginPage() {
               <div className="relative">
                 <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
                 <input
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••••••"
-                  className="w-full pl-10 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-navy-900 focus:bg-white transition"
+                  className="w-full pl-10 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-navy-900 focus:bg-white transition"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3.5 top-3 text-slate-400 hover:text-slate-600 transition"
+                  title={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
               </div>
             </div>
 

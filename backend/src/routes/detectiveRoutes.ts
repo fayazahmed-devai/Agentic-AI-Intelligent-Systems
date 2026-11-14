@@ -9,3 +9,4 @@ router.post('/investigate', DetectiveController.investigate);
 router.get('/history', DetectiveController.getHistory);
 
 export default router;
+

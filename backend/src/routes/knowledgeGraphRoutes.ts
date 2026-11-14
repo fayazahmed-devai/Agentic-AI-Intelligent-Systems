@@ -9,3 +9,4 @@ router.get('/', KnowledgeGraphController.getGraph);
 router.post('/explain-node', KnowledgeGraphController.explainNode);
 
 export default router;
+

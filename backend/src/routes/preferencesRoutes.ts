@@ -9,3 +9,4 @@ router.get('/', PreferencesController.getPreferences);
 router.put('/', PreferencesController.updatePreferences);
 
 export default router;
+
