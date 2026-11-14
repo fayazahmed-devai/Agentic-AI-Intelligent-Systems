@@ -23,6 +23,10 @@ export async function requireAuth(
     else if (req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
       token = req.headers.authorization.split(' ')[1];
     }
+    // Check query param ?token=
+    else if (req.query && typeof req.query.token === 'string') {
+      token = req.query.token;
+    }
 
     if (!token) {
       res.status(401).json({
@@ -66,4 +70,36 @@ export async function requireAuth(
     });
   }
 }
+
+export async function optionalAuth(
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    let token: string | undefined;
+
+    if (req.cookies && req.cookies.nexusmind_token) {
+      token = req.cookies.nexusmind_token;
+    } else if (req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
+      token = req.headers.authorization.split(' ')[1];
+    } else if (req.query && typeof req.query.token === 'string') {
+      token = req.query.token;
+    }
+
+    if (token) {
+      const decoded = AuthService.verifyToken(token);
+      if (decoded && decoded.id) {
+        const user = await db.users.findById(decoded.id);
+        if (user) {
+          req.user = user;
+        }
+      }
+    }
+  } catch {
+    // Continue without req.user for optional auth
+  }
+  next();
+}
+
 

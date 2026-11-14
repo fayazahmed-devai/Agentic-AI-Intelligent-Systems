@@ -10,12 +10,15 @@ interface SourceCitationViewerProps {
 export default function SourceCitationViewer({ source, onClose }: SourceCitationViewerProps) {
   if (!source) return null;
 
-  const label =
+  const rawLabel =
     (source as any).source_label ||
     (source as any).sourceLabel ||
     (source as any).fileName ||
-    (source as any).file_name ||
-    'Verified Evidence Source';
+    (source as any).file_name;
+  const label =
+    typeof rawLabel === 'string' && rawLabel.trim()
+      ? rawLabel.replace(/â€”/g, '—').replace(/â€“/g, '–').replace(/â€™/g, "'").trim()
+      : 'Verified Evidence Source';
   const fileId = (source as any).file_id || (source as any).fileId;
   const pageNum = (source as any).page_number || (source as any).pageNumber;
   const timestamp = (source as any).timestamp;

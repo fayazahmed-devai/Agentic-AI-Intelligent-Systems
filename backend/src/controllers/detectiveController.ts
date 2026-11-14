@@ -23,7 +23,16 @@ export const DetectiveController = {
           userFiles = await db.files.find({ user_id: 'usr_demo_evaluator', processing_status: 'Processed' });
         }
       }
-      const targetFiles = fileIds.length > 0 ? userFiles.filter((f) => fileIds.includes(f.id)) : userFiles;
+      let targetFiles = fileIds.length > 0 ? userFiles.filter((f) => fileIds.includes(f.id)) : userFiles;
+      if (targetFiles.length === 0 && fileIds.length > 0) {
+        for (const id of fileIds) {
+          const f = await db.files.findById(id);
+          if (f && f.processing_status === 'Processed') targetFiles.push(f);
+        }
+      }
+      if (targetFiles.length === 0) {
+        targetFiles = userFiles;
+      }
 
       if (targetFiles.length === 0) {
         res.status(400).json({

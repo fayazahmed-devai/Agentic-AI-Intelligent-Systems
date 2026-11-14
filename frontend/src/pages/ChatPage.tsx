@@ -263,12 +263,15 @@ export default function ChatPage() {
                         </span>
                         <div className="flex flex-wrap gap-1.5">
                           {msg.sources.map((src, sIdx) => {
-                            const label =
+                            const rawLabel =
                               (src as any).source_label ||
                               (src as any).sourceLabel ||
                               (src as any).fileName ||
-                              (src as any).file_name ||
-                              `Source #${sIdx + 1}`;
+                              (src as any).file_name;
+                            const label =
+                              typeof rawLabel === 'string' && rawLabel.trim()
+                                ? rawLabel.replace(/â€”/g, '—').replace(/â€“/g, '–').replace(/â€™/g, "'").trim()
+                                : `Source #${sIdx + 1}`;
                             return (
                               <button
                                 key={src.id || sIdx}
