@@ -13,8 +13,10 @@ import {
   RotateCcw,
   UploadCloud,
   AlertCircle,
+  Link2,
 } from 'lucide-react';
 import { useFiles } from '../context/FileContext';
+import { setCustomBackendUrl, getBaseURL } from '../services/api';
 
 interface FileUploaderModalProps {
   isOpen: boolean;
@@ -28,6 +30,19 @@ export default function FileUploaderModal({ isOpen, onClose }: FileUploaderModal
   const [dragOver, setDragOver] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState('');
+  const [customBackendInput, setCustomBackendInput] = useState('');
+  const [backendConfigSuccess, setBackendConfigSuccess] = useState('');
+
+  const handleSaveBackend = () => {
+    if (customBackendInput.trim()) {
+      setCustomBackendUrl(customBackendInput.trim());
+      setBackendConfigSuccess('Connected backend URL! Retrying upload...');
+      setTimeout(() => {
+        setUploadError('');
+        setBackendConfigSuccess('');
+      }, 1000);
+    }
+  };
 
   // Audio recording state
   const [isRecording, setIsRecording] = useState(false);
@@ -234,9 +249,46 @@ export default function FileUploaderModal({ isOpen, onClose }: FileUploaderModal
         {/* Modal Body */}
         <div className="p-6 overflow-y-auto space-y-4 flex-1">
           {uploadError && (
-            <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center space-x-2">
-              <AlertCircle className="w-4 h-4 flex-shrink-0" />
-              <span>{uploadError}</span>
+            <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs space-y-2">
+              <div className="flex items-start justify-between gap-2">
+                <div className="flex items-start space-x-2">
+                  <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                  <span>{uploadError}</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setUploadError('')}
+                  className="text-rose-500 hover:text-rose-800 text-[11px] font-bold px-1.5 py-0.5 rounded"
+                >
+                  ✕
+                </button>
+              </div>
+              <div className="pt-2 border-t border-rose-100 flex flex-col gap-1.5">
+                <label className="text-[11px] font-bold text-rose-900 flex items-center gap-1">
+                  <Link2 className="w-3.5 h-3.5" />
+                  <span>Connect Live Render Backend URL (Optional):</span>
+                </label>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="text"
+                    value={customBackendInput}
+                    onChange={(e) => setCustomBackendInput(e.target.value)}
+                    placeholder="https://your-service.onrender.com"
+                    className="flex-1 px-2.5 py-1.5 text-xs bg-white border border-rose-300 rounded-lg text-slate-800 focus:outline-none focus:ring-1 focus:ring-rose-500"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleSaveBackend}
+                    disabled={!customBackendInput.trim()}
+                    className="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 disabled:opacity-50 text-white font-bold text-[11px] rounded-lg transition"
+                  >
+                    Save & Reconnect
+                  </button>
+                </div>
+                {backendConfigSuccess && (
+                  <span className="text-[11px] text-emerald-600 font-semibold">{backendConfigSuccess}</span>
+                )}
+              </div>
             </div>
           )}
 

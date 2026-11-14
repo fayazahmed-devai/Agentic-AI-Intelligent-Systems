@@ -12,7 +12,9 @@ import {
   EyeOff,
   UserPlus,
   CheckCircle2,
+  Link2,
 } from 'lucide-react';
+import { setCustomBackendUrl, getBaseURL } from '../services/api';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -21,9 +23,20 @@ export default function LoginPage() {
   const [errorMsg, setErrorMsg] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [forgotModalOpen, setForgotModalOpen] = useState(false);
+  const [backendUrlInput, setBackendUrlInput] = useState('');
+  const [showBackendInput, setShowBackendInput] = useState(false);
+  const [backendSavedMsg, setBackendSavedMsg] = useState('');
 
   const { login } = useAuth();
   const navigate = useNavigate();
+
+  const handleSaveBackend = () => {
+    if (backendUrlInput.trim()) {
+      setCustomBackendUrl(backendUrlInput.trim());
+      setBackendSavedMsg('Backend URL connected!');
+      setTimeout(() => setBackendSavedMsg(''), 2000);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -204,6 +217,45 @@ export default function LoginPage() {
             <Link to="/register" className="text-navy-900 font-bold hover:underline">
               Create an account
             </Link>
+          </div>
+
+          {/* Backend Connection Config Option */}
+          <div className="pt-2 border-t border-slate-100 text-center">
+            <button
+              type="button"
+              onClick={() => setShowBackendInput((prev) => !prev)}
+              className="text-[11px] text-slate-400 hover:text-slate-600 font-semibold inline-flex items-center gap-1 transition"
+            >
+              <Link2 className="w-3 h-3" />
+              <span>{showBackendInput ? 'Hide Backend Settings' : 'Connect Render Backend URL'}</span>
+            </button>
+            {showBackendInput && (
+              <div className="mt-2 p-3 rounded-xl bg-slate-50 border border-slate-200 text-left space-y-2">
+                <label className="text-[10px] font-bold text-slate-600 uppercase tracking-wider block">
+                  Render Live Backend URL
+                </label>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="text"
+                    value={backendUrlInput}
+                    onChange={(e) => setBackendUrlInput(e.target.value)}
+                    placeholder="https://your-service.onrender.com"
+                    className="flex-1 px-2.5 py-1.5 text-xs bg-white border border-slate-300 rounded-lg text-slate-800 focus:outline-none focus:border-navy-900"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleSaveBackend}
+                    disabled={!backendUrlInput.trim()}
+                    className="px-3 py-1.5 bg-navy-900 hover:bg-navy-800 disabled:opacity-50 text-white font-bold text-[11px] rounded-lg transition"
+                  >
+                    Save
+                  </button>
+                </div>
+                {backendSavedMsg && (
+                  <p className="text-[11px] text-emerald-600 font-semibold">{backendSavedMsg}</p>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>

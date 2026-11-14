@@ -1,24 +1,38 @@
 import axios from 'axios';
 
-const rawBase =
-  import.meta.env.VITE_API_URL ||
-  import.meta.env.VITE_API_BASE_URL ||
-  '';
+export function getBaseURL(): string {
+  const customUrl = localStorage.getItem('nexusmind_backend_url');
+  const rawBase =
+    customUrl ||
+    import.meta.env.VITE_API_URL ||
+    import.meta.env.VITE_API_BASE_URL ||
+    '';
 
-let baseURL = '/api';
-if (rawBase && rawBase.trim()) {
-  const trimmed = rawBase.trim().replace(/\/+$/, '');
-  baseURL = trimmed.endsWith('/api') ? trimmed : `${trimmed}/api`;
+  if (rawBase && rawBase.trim()) {
+    const trimmed = rawBase.trim().replace(/\/+$/, '');
+    return trimmed.endsWith('/api') ? trimmed : `${trimmed}/api`;
+  }
+  return '/api';
+}
+
+export function setCustomBackendUrl(url: string): void {
+  if (!url || !url.trim()) {
+    localStorage.removeItem('nexusmind_backend_url');
+  } else {
+    const trimmed = url.trim().replace(/\/+$/, '');
+    localStorage.setItem('nexusmind_backend_url', trimmed);
+  }
 }
 
 const api = axios.create({
-  baseURL,
+  baseURL: getBaseURL(),
   withCredentials: true,
   timeout: 120000,
 });
 
 api.interceptors.request.use(
   (config) => {
+    config.baseURL = getBaseURL();
     const token = localStorage.getItem('nexusmind_token');
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`;
