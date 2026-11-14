@@ -36,6 +36,7 @@ export default function LearningMentorPage() {
   const [selectedDepth, setSelectedDepth] = useState<ExplanationDepth>('university');
   const [loading, setLoading] = useState(false);
   const [explanation, setExplanation] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [progressData, setProgressData] = useState<LearningProgress[]>([]);
   const [loadingProgress, setLoadingProgress] = useState(true);
 
@@ -59,6 +60,7 @@ export default function LearningMentorPage() {
     const t = (customTopic || topic).trim();
     if (!t) return;
 
+    setError(null);
     setLoading(true);
     setExplanation(null);
     try {
@@ -66,10 +68,15 @@ export default function LearningMentorPage() {
         topic: t,
         depth: selectedDepth,
       });
-      setExplanation(res?.data?.explanation || res?.explanation || '');
+      if (res?.data?.explanation || res?.explanation) {
+        setExplanation(res?.data?.explanation || res?.explanation || '');
+      } else {
+        setError('No explanation could be generated for this topic.');
+      }
       fetchProgress();
     } catch (err: any) {
-      setExplanation(`Unable to synthesize explanation: ${err.message || 'Error occurred.'}`);
+      console.error('Mentor explanation error:', err);
+      setError(err.message || 'Unable to generate explanation. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -184,6 +191,32 @@ export default function LearningMentorPage() {
           ))}
         </div>
       </div>
+
+      {/* Inline Error Notice */}
+      {error && (
+        <div className="p-5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-semibold flex items-center justify-between shadow-sm animate-fadeIn">
+          <div className="flex items-center space-x-2.5">
+            <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping"></span>
+            <span>{error}</span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <button
+              type="button"
+              onClick={() => handleExplain()}
+              className="px-3 py-1 rounded-lg bg-rose-600 hover:bg-rose-700 text-white font-bold text-[11px] shadow-sm transition"
+            >
+              Retry
+            </button>
+            <button
+              type="button"
+              onClick={() => setError(null)}
+              className="px-2 py-1 text-rose-500 hover:text-rose-800 font-bold text-[11px]"
+            >
+              Dismiss
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Explanation Output Container */}
       {explanation && (

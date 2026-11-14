@@ -25,57 +25,35 @@ export const MentorController = {
         8
       );
 
-      const levelDescriptions: Record<string, string> = {
-        beginner: 'Explain like I am a beginner. Use everyday intuitive metaphors, zero jargon, and simple language.',
-        simple: 'Provide a clear, simple explanation with illustrative examples and real-world intuition.',
-        university: 'Provide a rigorous university-level academic explanation. Include formal principles, derivations, and theoretical bounds.',
-        technical: 'Provide a deep technical and mathematical breakdown. Include exact equations, vector relationships, and boundary conditions.',
-        exam: 'Provide high-yield exam preparation notes. Highlight common exam pitfalls, key formulas to memorize, and typical questions.',
-      };
-
-      const instruction = levelDescriptions[level] || levelDescriptions.university;
-
-      const prompt = `You are a world-class Personal AI Learning Mentor.
-The student asks for an explanation of: "${concept.trim()}"
-PEDAGOGICAL LEVEL: ${level.toUpperCase()} (${instruction})
-
-MANDATE:
-- Ground your explanation strictly on the student's uploaded materials.
-- Structure with clear headings:
-  1. Core Concept Overview
-  2. Detailed Explanation (${level} level)
-  3. Key Equations or Principles
-  4. Practical Example
-  5. Exam Pitfall or Pro-Tip
-- Use clean readable Unicode (Ω, A, V, W, ≈, etc.). DO NOT output raw LaTeX or dollar signs ($).
-
-EVIDENCE FROM STUDENT'S WORKSPACE:
-${sources.map((s) => `[${s.sourceLabel}]: ${s.content.extracted_text}`).join('\n\n')}`;
-
-      const aiResponse = await GeminiService.chatWithWorkspace({
-        question: prompt,
+      const aiResponse = await GeminiService.explainConcept({
+        concept: concept.trim(),
+        level,
         sources,
       });
 
-      // Update or record learning progress
-      const existingProgress = await db.learningProgress.findOne({ user_id: userId, topic: concept.trim() });
-      if (existingProgress) {
-        await db.learningProgress.updateById(existingProgress.id, {
-          last_studied_at: new Date().toISOString(),
-          topics_revised: Array.from(new Set([...(existingProgress.topics_revised || []), level])),
-        });
-      } else {
-        await db.learningProgress.create({
-          id: uuidv4(),
-          user_id: userId,
-          topic: concept.trim(),
-          mastery_percentage: 65.0,
-          quizzes_attempted: 0,
-          correct_answers: 0,
-          topics_revised: [level],
-          recommended_next: ['Attempt interactive quiz', 'Review practice problems'],
-          last_studied_at: new Date().toISOString(),
-        });
+      // Update or record learning progress safely
+      try {
+        const existingProgress = await db.learningProgress.findOne({ user_id: userId, topic: concept.trim() });
+        if (existingProgress) {
+          await db.learningProgress.updateById(existingProgress.id, {
+            last_studied_at: new Date().toISOString(),
+            topics_revised: Array.from(new Set([...(existingProgress.topics_revised || []), level])),
+          });
+        } else {
+          await db.learningProgress.create({
+            id: uuidv4(),
+            user_id: userId,
+            topic: concept.trim(),
+            mastery_percentage: 65.0,
+            quizzes_attempted: 0,
+            correct_answers: 0,
+            topics_revised: [level],
+            recommended_next: ['Attempt interactive quiz', 'Review practice problems'],
+            last_studied_at: new Date().toISOString(),
+          });
+        }
+      } catch (dbErr: any) {
+        console.warn('Learning progress record notice:', dbErr.message);
       }
 
       res.status(200).json({
@@ -83,7 +61,7 @@ ${sources.map((s) => `[${s.sourceLabel}]: ${s.content.extracted_text}`).join('\n
         data: {
           concept: concept.trim(),
           level,
-          explanation: cleanLatexAndFormatting(aiResponse.answer),
+          explanation: cleanLatexAndFormatting(aiResponse.explanation),
           sources: aiResponse.sources,
         },
       });
