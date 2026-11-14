@@ -187,6 +187,7 @@ export class SqlTable<T extends { id: string; user_id?: string; created_at?: str
   }
 
   async find(query: Partial<T> = {}): Promise<T[]> {
+    const localData = await this.localStore.find(query);
     if (this.supabase) {
       try {
         let builder = this.supabase.from(this.tableName).select('*');
@@ -196,14 +197,23 @@ export class SqlTable<T extends { id: string; user_id?: string; created_at?: str
           }
         }
         const { data, error } = await builder;
-        if (!error && Array.isArray(data)) {
-          return data as T[];
+        if (!error && Array.isArray(data) && data.length > 0) {
+          const map = new Map<string, T>();
+          for (const item of data as T[]) {
+            map.set((item as any).id, item);
+          }
+          for (const item of localData) {
+            if (!map.has((item as any).id)) {
+              map.set((item as any).id, item);
+            }
+          }
+          return Array.from(map.values());
         }
       } catch (err: any) {
         // Fallback to local store
       }
     }
-    return this.localStore.find(query);
+    return localData;
   }
 
   async findOne(query: Partial<T> = {}): Promise<T | null> {

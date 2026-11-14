@@ -47,10 +47,50 @@ export default function LearningMentorPage() {
   const fetchProgress = async () => {
     setLoadingProgress(true);
     try {
-      const res = await api.get('/mentor/progress');
-      if (res.data) setProgressData(res.data);
+      const res: any = await api.get('/mentor/progress');
+      let records: any[] = [];
+      if (Array.isArray(res)) {
+        records = res;
+      } else if (res?.data) {
+        if (Array.isArray(res.data)) {
+          records = res.data;
+        } else if (Array.isArray(res.data.records)) {
+          records = res.data.records;
+        }
+      } else if (Array.isArray(res?.records)) {
+        records = res.records;
+      }
+
+      const normalized: LearningProgress[] = records.map((item: any, idx: number) => {
+        const score = typeof item.mastery_score === 'number'
+          ? item.mastery_score
+          : (typeof item.mastery_percentage === 'number' ? item.mastery_percentage : 70);
+        const passed = typeof item.quizzes_passed === 'number'
+          ? item.quizzes_passed
+          : (typeof item.correct_answers === 'number' ? item.correct_answers : 0);
+        const attempted = typeof item.quizzes_attempted === 'number' ? item.quizzes_attempted : 0;
+        const nextStep = typeof item.recommended_next_step === 'string'
+          ? item.recommended_next_step
+          : (Array.isArray(item.recommended_next) && item.recommended_next.length > 0 ? item.recommended_next[0] : 'Review key principles');
+
+        return {
+          id: item.id || `lp_${idx}`,
+          user_id: item.user_id || '',
+          topic: item.topic || 'Untitled Topic',
+          mastery_score: score,
+          quizzes_attempted: attempted,
+          quizzes_passed: passed,
+          last_studied_at: item.last_studied_at || new Date().toISOString(),
+          recommended_next_step: nextStep,
+          weak_concepts: Array.isArray(item.weak_concepts) ? item.weak_concepts : [],
+          strengths: Array.isArray(item.strengths) ? item.strengths : [],
+        };
+      });
+
+      setProgressData(normalized);
     } catch (err) {
       console.error('Failed to load learning progress', err);
+      setProgressData([]);
     } finally {
       setLoadingProgress(false);
     }
@@ -268,7 +308,7 @@ export default function LearningMentorPage() {
             <Loader2 className="w-6 h-6 animate-spin mx-auto mb-2 text-brand-violet" />
             <span className="text-xs font-semibold">Calculating mastery stats...</span>
           </div>
-        ) : progressData.length === 0 ? (
+        ) : !Array.isArray(progressData) || progressData.length === 0 ? (
           <div className="bg-white p-8 rounded-3xl border border-slate-200 text-center text-slate-400 space-y-2">
             <BookOpen className="w-10 h-10 mx-auto text-slate-300" />
             <p className="text-sm font-semibold text-slate-700">No Learning History Yet</p>

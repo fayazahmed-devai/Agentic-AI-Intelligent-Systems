@@ -87,6 +87,31 @@ export const MentorController = {
       const totalCorrect = progressRecords.reduce((acc, p) => acc + (p.correct_answers || 0), 0);
       const avgScore = totalAttempted > 0 ? Math.round((totalCorrect / totalAttempted) * 100) : 85;
 
+      const normalizedRecords = progressRecords.map((p) => {
+        const score = typeof p.mastery_percentage === 'number' ? p.mastery_percentage : 70;
+        const passed = typeof p.correct_answers === 'number' ? p.correct_answers : 0;
+        const attempted = typeof p.quizzes_attempted === 'number' ? p.quizzes_attempted : 0;
+        const recNext = Array.isArray(p.recommended_next) && p.recommended_next.length > 0
+          ? p.recommended_next.join('; ')
+          : 'Review key formulas and problem sets';
+
+        return {
+          id: p.id,
+          user_id: p.user_id,
+          topic: p.topic,
+          mastery_score: score,
+          mastery_percentage: score,
+          quizzes_attempted: attempted,
+          quizzes_passed: passed,
+          correct_answers: passed,
+          recommended_next_step: recNext,
+          recommended_next: Array.isArray(p.recommended_next) ? p.recommended_next : [recNext],
+          last_studied_at: p.last_studied_at || new Date().toISOString(),
+          weak_concepts: (p as any).weak_concepts || [],
+          strengths: (p as any).strengths || [],
+        };
+      });
+
       res.status(200).json({
         success: true,
         data: {
@@ -94,7 +119,7 @@ export const MentorController = {
           quizzesAttempted: totalAttempted,
           averageAccuracy: avgScore,
           activeMaterialsCount: userFiles.length,
-          records: progressRecords,
+          records: normalizedRecords,
           personalizedRecommendations: [
             'Review Mesh & Loop Analysis matrix derivations in BEE assignment',
             'Practice 5 MCQs on Superposition Theorem power non-linearity',
